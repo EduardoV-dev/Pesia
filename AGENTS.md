@@ -36,18 +36,18 @@ Direction language is goal-relative and never moralised. Use
 
 They live in `docs/backlog/epics/README.md`. The ones that shape code most:
 
-| # | Guardrail | Where it bites |
-|---|---|---|
-| G1 | Never rank by magnitude of body change. Rank behaviour only. | Board, awards |
-| G2 | Never show a raw single-reading delta. Only rolling trends with a deadband. | Stats, board |
-| G3 | Direction language is goal-relative, never moralised. | All copy |
-| G4 | BMI optional, off by default, private to the member, never on the board. | Stats |
-| G5 | No calorie or weight-loss nudges. "Maintain" and "Gain" are first-class goals. | Stats, copy |
-| G6 | Goal direction derives from the user's own target. Never assume "lose". | Profiles, stats |
-| G7 | Reminders are opt-in, name whose turn it is, never mention a weight. | Reminders |
-| G8 | Hidden members render as "private". Never infer a reason for absence. | Board, reminders |
-| G9 | Dependents are trend-only: no target, no progress %, no ranking, no BMI. | Profiles, board |
-| G10 | Visibility filtering is enforced server-side on every read. | Board, entries |
+| #   | Guardrail                                                                      | Where it bites   |
+| --- | ------------------------------------------------------------------------------ | ---------------- |
+| G1  | Never rank by magnitude of body change. Rank behaviour only.                   | Board, awards    |
+| G2  | Never show a raw single-reading delta. Only rolling trends with a deadband.    | Stats, board     |
+| G3  | Direction language is goal-relative, never moralised.                          | All copy         |
+| G4  | BMI optional, off by default, private to the member, never on the board.       | Stats            |
+| G5  | No calorie or weight-loss nudges. "Maintain" and "Gain" are first-class goals. | Stats, copy      |
+| G6  | Goal direction derives from the user's own target. Never assume "lose".        | Profiles, stats  |
+| G7  | Reminders are opt-in, name whose turn it is, never mention a weight.           | Reminders        |
+| G8  | Hidden members render as "private". Never infer a reason for absence.          | Board, reminders |
+| G9  | Dependents are trend-only: no target, no progress %, no ranking, no BMI.       | Profiles, board  |
+| G10 | Visibility filtering is enforced server-side on every read.                    | Board, entries   |
 
 **G10 is the highest-risk surface in the product.** If it leaks, the app is toxic. It
 gets integration tests before anything behind it ships. There is no client-side
@@ -83,16 +83,16 @@ openspec new change "<name>"     # proposal -> specs -> design -> tasks
 /openspec-archive-change <name>  # fold delta specs into openspec/specs/
 ```
 
-| # | Change | Capabilities |
-|---|---|---|
-| 1 | `epic-01-foundation-and-auth` | `auth`, `app-shell` |
-| 2 | `epic-02-profiles-and-identity` | `profiles`, `goals` |
-| 3 | `epic-03-groups-and-permissions` | `groups`, `permissions` |
-| 4 | `epic-04-entries-and-offline` | `entries`, `offline-capture` |
-| 5 | `epic-05-stats-and-personal-trend` | `stats` |
-| 6 | `epic-06-group-board-and-awards` | `group-board`, `awards` |
-| 7 | `epic-07-pwa-and-reminders` | `pwa`, `reminders` |
-| 8 | `epic-08-export-deletion-and-polish` | `data-export`, `account-lifecycle`, `guardrail-audit` |
+| #   | Change                               | Capabilities                                          |
+| --- | ------------------------------------ | ----------------------------------------------------- |
+| 1   | `epic-01-foundation-and-auth`        | `auth`, `app-shell`                                   |
+| 2   | `epic-02-profiles-and-identity`      | `profiles`, `goals`                                   |
+| 3   | `epic-03-groups-and-permissions`     | `groups`, `permissions`                               |
+| 4   | `epic-04-entries-and-offline`        | `entries`, `offline-capture`                          |
+| 5   | `epic-05-stats-and-personal-trend`   | `stats`                                               |
+| 6   | `epic-06-group-board-and-awards`     | `group-board`, `awards`                               |
+| 7   | `epic-07-pwa-and-reminders`          | `pwa`, `reminders`                                    |
+| 8   | `epic-08-export-deletion-and-polish` | `data-export`, `account-lifecycle`, `guardrail-audit` |
 
 Do not implement an epic without its change. Do not skip the archive step — the
 accumulated `openspec/specs/` is the real system spec.
@@ -141,18 +141,18 @@ Read them; do not work from memory.
 
 ## 4. Stack
 
-| Concern | Choice |
-|---|---|
-| Framework | Next.js 16.4.5, App Router, Turbopack, React 19.3.1 |
-| Language | TypeScript |
-| Styling | Tailwind v4 + shadcn/ui — CSS variables in `globals.css`, **no** `tailwind.config.js` |
-| Auth | Better Auth 1.7.18 — adapter import path is `better-auth/adapters/drizzle` |
-| Data | Drizzle ORM 0.45.4, `drizzle-kit generate` → `drizzle-kit migrate` |
-| DB driver | `postgres-js` locally (Docker Postgres); the Neon swap is isolated in one file |
-| Offline | Serwist 9.5.13 service worker, IndexedDB write queue |
-| PWA | `app/manifest.ts`, `display: "standalone"` |
-| Notifications | `web-push` (VAPID) behind a Vercel Cron; Resend for email fallback |
-| Tests | Vitest 5.1 (unit + integration against real Postgres) |
+| Concern       | Choice                                                                                |
+| ------------- | ------------------------------------------------------------------------------------- |
+| Framework     | Next.js 16.4.5, App Router, Turbopack, React 19.3.1                                   |
+| Language      | TypeScript                                                                            |
+| Styling       | Tailwind v4 + shadcn/ui — CSS variables in `globals.css`, **no** `tailwind.config.js` |
+| Auth          | Better Auth 1.7.18 — adapter import path is `better-auth/adapters/drizzle`            |
+| Data          | Drizzle ORM 0.45.4, `drizzle-kit generate` → `drizzle-kit migrate`                    |
+| DB driver     | `postgres-js` locally (Docker Postgres); the Neon swap is isolated in one file        |
+| Offline       | Serwist 9.5.13 service worker, IndexedDB write queue                                  |
+| PWA           | `app/manifest.ts`, `display: "standalone"`                                            |
+| Notifications | `web-push` (VAPID) behind a Vercel Cron; Resend for email fallback                    |
+| Tests         | Vitest 5.1 (unit + integration against real Postgres)                                 |
 
 **Version caution:** Better Auth's Drizzle adapter import path changed between releases.
 It is `better-auth/adapters/drizzle` in 1.7.x — verify before wiring.

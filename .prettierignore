@@ -1,0 +1,12 @@
+node_modules
+.next
+out
+build
+coverage
+drizzle
+package-lock.json
+.agents
+.impeccable
+docs
+openspec
+public/icons

@@ -67,15 +67,15 @@ profiles (
 
 ## Acceptance criteria
 
-- [ ] **US-1.1** A user can sign in with Google and is authenticated.
-- [ ] **US-1.2** The session survives a reload and a new browser session.
-- [ ] **US-1.3** Signing out ends the session on the server, not only in the client.
-- [ ] **US-1.4** A first-time signer is routed to onboarding; a returning signer is not.
-- [ ] **US-1.5** The shell is usable at 360 px wide with no horizontal scrolling.
-- [ ] **US-1.6** Every interactive element is reachable and operable by keyboard, with an accessible name.
-- [ ] **US-1.7** `drizzle-kit migrate` against an empty database produces the full expected schema.
-- [ ] **US-1.8** The deployed domain completes the Google OAuth round trip (`https://<domain>/api/auth/callback/google`).
-- [ ] `npm run lint` and `npm run typecheck` pass with no errors.
+- [ ] **US-1.1** A user can sign in with Google and is authenticated. — *The flow is wired and the session round trip is covered by integration tests, but the Google consent screen has not been exercised: it needs the OAuth client credentials.*
+- [x] **US-1.2** The session survives a reload and a new browser session.
+- [x] **US-1.3** Signing out ends the session on the server, not only in the client.
+- [x] **US-1.4** A first-time signer is routed to onboarding; a returning signer is not.
+- [x] **US-1.5** The shell is usable at 360 px wide with no horizontal scrolling.
+- [x] **US-1.6** Every interactive element is reachable and operable by keyboard, with an accessible name.
+- [x] **US-1.7** `drizzle-kit migrate` against an empty database produces the full expected schema.
+- [ ] **US-1.8** The deployed domain completes the Google OAuth round trip (`https://<domain>/api/auth/callback/google`). — *Pending: needs the Google OAuth client and the deployed domain.*
+- [x] `npm run lint` and `npm run typecheck` pass with no errors.
 
 ## Dependencies
 

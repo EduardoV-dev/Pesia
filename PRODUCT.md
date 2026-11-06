@@ -20,7 +20,7 @@ Five recurring people, all in one family today and reproducible in any family to
 - **Ana — the recorder.** Owns the scale and logs everyone's weight on one shared phone.
   Needs speed, one-handed entry, and a flow that works with no signal.
 - **Luis — the member with a phone.** Logs his own weight. Needs to know whether he is
-  moving toward *his* target, not toward a shared scale.
+  moving toward _his_ target, not toward a shared scale.
 - **Mara — the dependent.** A kid with no phone and no login. Her guardian records her
   weight. She is never scored.
 - **Nina — the guardian and group owner.** Manages her kid and her own profile. Controls
