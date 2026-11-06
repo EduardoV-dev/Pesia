@@ -1,0 +1,60 @@
+schema: spec-driven
+
+context: |
+  Weight Tracker is an invite-only PWA for one family that weighs everyone together.
+  One recorder logs everyone's weight; each member sees their own goal-relative trend;
+  the group sees consistency, never body size. Mobile-first, closed by default.
+
+  Language: every user-facing string is Spanish only — UI labels, buttons, empty states,
+  validation and error messages, emails, push notification copy, reminders, the privacy
+  policy and the terms of use. No English reaches the user. Developer-facing material
+  (identifiers, code comments, OpenSpec artifacts, docs) stays in English.
+
+  Guardrails G1-G10 in docs/backlog/epics/README.md are acceptance criteria for every
+  epic. The highest-risk one is G10: visibility filtering is enforced server-side on
+  every read, the client never receives data the viewer may not see, and there is no API
+  route that returns raw membership plus raw entries. G10 gets integration tests before
+  anything behind it ships.
+
+  Write permission (`can_log_for`) and read permission (`visibility`) are separate
+  checks with no code path that treats one as the other.
+
+  Direction language is goal-relative and never moralised: "moviendo hacia tu objetivo",
+  "alejándote de tu objetivo", "estable". Never "ganado", "perdido", "bien", "mal", and
+  never a bare number with a red/green verdict.
+
+  Stack: Next.js 16.4.5 (App Router, Turbopack), React 19.3.1, TypeScript, Tailwind v4
+  with CSS-variable tokens and no tailwind.config.js, shadcn/ui, Better Auth 1.7.18
+  (adapter path `better-auth/adapters/drizzle`), Drizzle ORM 0.45.4, Serwist 9.5.13,
+  web-push, Resend, Vitest 5.1.
+
+  Git: `main` is production and is never committed to. All work happens on `development`,
+  committed per epic with conventional commit messages and no AI attribution.
+
+  UI work follows the impeccable comp-led flow: the direction is rolled with
+  `impeccable concept-seed --scope direction --mode operate`, comps are built and put in
+  front of the user, and the user picks before any screen is built. The app is an
+  Operate surface: the visual world contributes type, palette, density and one signature
+  move, never the layout, the navigation model or the controls.
+
+rules:
+  proposal:
+    - Name the epic and the user-story IDs it covers.
+    - State which guardrails the change touches and how each is verified.
+  design:
+    - Record the permission model before the data model whenever writes and reads differ.
+    - Name the server-side function that assembles any filtered read.
+  tasks:
+    - Group tasks by the user-story IDs they satisfy.
+    - Include the test or explicit copy review for every guardrail the change touches.
+
+operations:
+  apply:
+    guidance:
+      - Keep the working tree on `development`; never commit to `main`.
+      - Run `npm run lint` and `npm run typecheck` before reporting a task complete.
+      - Every user-facing string added in a task is Spanish.
+  archive:
+    guidance:
+      - Archive only after the epic's acceptance list is ticked and the checks pass.
+      - The archive must leave `openspec/specs/` describing the shipped behaviour.
