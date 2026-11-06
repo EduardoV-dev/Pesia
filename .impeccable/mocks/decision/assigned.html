@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=390, initial-scale=1">
+<title>Weight Tracker — Ficha de herbario</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Azeret+Mono:wght@400;500&family=Familjen+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ground:#e7e8e1; --sheet:#f1f2ec; --ink:#20241f; --ink-soft:#5d635a;
+    --rule:#c9ccc2; --green:#4a6b4f; --seal:#8a4436; --amber:#9a6b2f;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{background:#3c4038}
+  body{font-family:'Familjen Grotesk',system-ui,sans-serif;color:var(--ink);-webkit-font-smoothing:antialiased}
+  .phone{width:390px;height:844px;overflow:hidden;background:var(--ground);position:relative;display:flex;flex-direction:column}
+  .sheet{margin:14px;background:var(--sheet);border:1px solid var(--rule);flex:1;display:flex;flex-direction:column;position:relative}
+  .sheet::after{content:"";position:absolute;inset:0;pointer-events:none;background-image:radial-gradient(rgba(32,36,31,.045) 1px,transparent 1px);background-size:3px 3px;opacity:.55}
+  .head{padding:14px 18px 0;display:flex;justify-content:space-between;align-items:baseline;border-bottom:1px solid var(--rule)}
+  .brand{font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-soft);font-weight:600}
+  .ficha{font-family:'Azeret Mono',monospace;font-size:10px;letter-spacing:.1em;color:var(--green)}
+  .body{flex:1;padding:16px 18px 0;display:flex;flex-direction:column;gap:14px}
+  .id{display:flex;justify-content:space-between;align-items:flex-end;border-bottom:1px solid var(--rule);padding-bottom:12px}
+  .id h1{font-size:27px;font-weight:600;letter-spacing:-.02em;line-height:1.05}
+  .unit{font-family:'Azeret Mono',monospace;font-size:13px;color:var(--ink-soft);padding-bottom:3px}
+  .meta{font-size:11.5px;color:var(--ink-soft);margin-top:4px}
+  .plot{height:236px;border-bottom:1px solid var(--rule);position:relative;background:repeating-linear-gradient(to bottom,transparent 0 27px,rgba(32,36,31,.07) 27px 28px)}
+  .plot svg{position:absolute;inset:0;width:100%;height:100%}
+  .cap{position:absolute;left:0;bottom:5px;font-family:'Azeret Mono',monospace;font-size:9.5px;letter-spacing:.08em;color:var(--ink-soft);text-transform:uppercase}
+  .dirrow{display:flex;justify-content:space-between;align-items:baseline}
+  .dir{font-size:15px;font-weight:600}
+  .dir em{font-style:normal;color:var(--green)}
+  .pct{font-family:'Azeret Mono',monospace;font-size:12px;color:var(--ink-soft)}
+  .entry{display:flex;align-items:center;gap:12px;border:1px solid var(--rule);background:var(--ground);padding:10px 12px}
+  .entry input{flex:1;min-width:0;background:transparent;border:0;outline:0;font-family:'Azeret Mono',monospace;font-size:38px;font-weight:500;color:var(--ink);letter-spacing:-.02em;width:100%}
+  .entry .kg{font-family:'Azeret Mono',monospace;font-size:14px;color:var(--ink-soft)}
+  .stamp{flex:0 0 auto;font-family:'Azeret Mono',monospace;font-size:9px;letter-spacing:.08em;color:var(--seal);border:1px solid var(--seal);padding:3px 6px;text-transform:uppercase}
+  .labels{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--rule);border:1px solid var(--rule)}
+  .labels div{background:var(--sheet);padding:7px 9px}
+  .labels dt{font-family:'Azeret Mono',monospace;font-size:8.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-soft)}
+  .labels dd{font-size:12.5px;margin-top:2px}
+  .hist .hl{font-family:'Azeret Mono',monospace;font-size:8.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-soft)}
+  .hrow{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--rule);border:1px solid var(--rule);margin-top:6px}
+  .hrow div{background:var(--sheet);padding:7px 8px;display:flex;flex-direction:column;gap:3px}
+  .hrow span{font-family:'Azeret Mono',monospace;font-size:8.5px;color:var(--ink-soft)}
+  .hrow b{font-family:'Azeret Mono',monospace;font-size:13px;font-weight:500}
+  .hrow .gap{background:repeating-linear-gradient(135deg,var(--sheet) 0 5px,#e9eae4 5px 10px)}
+  .hrow .gap b{color:var(--ink-soft)}
+  .foot{padding:14px 18px 16px;display:flex;flex-direction:column;gap:9px}
+  .primary{background:var(--green);color:#f2f4ef;font-family:'Familjen Grotesk';font-size:15px;font-weight:600;padding:13px;border:0;border-radius:2px;cursor:pointer;width:100%}
+  .next{display:flex;justify-content:space-between;align-items:center;font-size:12px;color:var(--ink-soft);border-top:1px solid var(--rule);padding-top:9px}
+  .next b{color:var(--ink);font-weight:600}
+  .queue{font-family:'Azeret Mono',monospace;font-size:10px;color:var(--amber);display:flex;align-items:center;gap:6px}
+  .dot{width:6px;height:6px;border-radius:50%;background:var(--amber)}
+</style>
+</head>
+<body>
+<div class="phone">
+  <div class="sheet">
+    <div class="head">
+      <span class="brand">Weight Tracker</span>
+      <span class="ficha">Ficha 03 / 06</span>
+    </div>
+    <div class="body">
+      <div class="id">
+        <div>
+          <h1>Luis Herrera</h1>
+          <p class="meta">Grupo Casa Herrera · domingo 8 nov</p>
+        </div>
+        <span class="unit">kg</span>
+      </div>
+
+      <div class="plot">
+        <svg viewBox="0 0 320 172" preserveAspectRatio="none" aria-label="Tendencia de 5 semanas">
+          <path d="M4 118 L34 112 L64 116 L94 104 L124 98 L150 92" fill="none" stroke="#20241f" stroke-width="2.2" stroke-linecap="round"/>
+          <path d="M196 74 L226 66 L256 60 L286 52 L314 46" fill="none" stroke="#20241f" stroke-width="2.2" stroke-linecap="round"/>
+          <circle cx="314" cy="46" r="3.4" fill="#4a6b4f"/>
+          <line x1="150" y1="92" x2="196" y2="74" stroke="#c9ccc2" stroke-width="1" stroke-dasharray="2 4"/>
+        </svg>
+        <span class="cap">media de 7 días · semana del 20 sin datos</span>
+      </div>
+
+      <div class="dirrow">
+        <span class="dir">Moviendo <em>hacia tu objetivo</em></span>
+        <span class="pct">62%</span>
+      </div>
+
+      <div class="entry">
+        <input value="72,4" inputmode="decimal" aria-label="Peso en kilogramos">
+        <span class="kg">kg</span>
+        <span class="stamp">en cola</span>
+      </div>
+
+      <div class="hist">
+        <span class="hl">Últimos pesajes</span>
+        <div class="hrow">
+          <div><span>1 nov</span><b>72,8</b></div>
+          <div><span>8 nov</span><b>72,4</b></div>
+          <div class="gap"><span>15 nov</span><b>—</b></div>
+          <div><span>22 nov</span><b>71,6</b></div>
+        </div>
+      </div>
+      <dl class="labels">
+        <div><dt>Objetivo</dt><dd>70,0 kg</dd></div>
+        <div><dt>Última medición</dt><dd>72,8 kg · 1 nov</dd></div>
+        <div><dt>Registrado por</dt><dd>Ana</dd></div>
+        <div><dt>Medido</dt><dd>Hoy, 18:40</dd></div>
+      </dl>
+    </div>
+    <div class="foot">
+      <button class="primary">Guardar peso</button>
+      <div class="next"><span>Siguiente persona: <b>Nina</b></span><span class="queue"><i class="dot"></i>1 entrada sin sincronizar</span></div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

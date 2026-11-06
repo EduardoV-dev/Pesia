@@ -28,7 +28,6 @@ serwist/
 
 # impeccable
 .impeccable/config.local.json
-.impeccable/mocks/
 .impeccable/review/
 .impeccable/build/
 

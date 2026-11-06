@@ -112,6 +112,14 @@ The app is an **Operate** surface: the world contributes type, palette, density 
 signature move, never the layout, the navigation model or the controls. Every control
 is a standard web control the visitor already knows.
 
+**The visual direction is already decided** (user-pinned, 2026-11-06): warm peach
+gradient canvas, pure-white large-radius cards, one saturated orange accent, near-black
+ink, big heavy grotesk numerals, dotted-grid plot fields, pill chips. The signature move
+is the orange sparkline with hollow dot markers. The full contract lives in
+`.impeccable/surface-brief.md`; the reference comp is
+`.impeccable/mocks/peach/weigh-in-sheet.html`. Build against it — do not re-roll the
+direction, and do not introduce a second accent colour or a red/green verdict.
+
 ### 3.3 Standards to load before editing code
 
 - `ev-coding-standards` → then `ev-review-nextjs`, `ev-review-react`,

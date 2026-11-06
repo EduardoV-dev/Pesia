@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Weight Tracker — Dirección visual: 4 opciones</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:#15171a;color:#e9eaec;font-family:system-ui,-apple-system,sans-serif;padding:34px 30px 60px}
+  h1{font-size:20px;font-weight:600;letter-spacing:-.01em}
+  .lede{color:#9aa1a8;font-size:13.5px;margin:7px 0 30px;max-width:76ch;line-height:1.55}
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(360px,1fr));gap:34px}
+  figure{background:#1e2126;border-radius:10px;overflow:hidden;border:1px solid #2c3036}
+  .shot{height:844px;overflow:hidden;display:flex;justify-content:center;background:#15171a}
+  .shot iframe{width:390px;height:844px;border:0}
+  figcaption{padding:15px 17px 18px}
+  .kicker{display:inline-block;font-size:9.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;background:#d92b1f;color:#fff;padding:3px 7px;margin-bottom:9px}
+  .kicker.roll{background:#e9eaec;color:#15171a}
+  .kicker.pick{background:#7fa8a2;color:#0f1113}
+  .kicker.alt{background:#2c3036;color:#9aa1a8}
+  h2{font-size:16px;font-weight:600;letter-spacing:-.01em}
+  .lineage{color:#8b9298;font-size:12px;margin-top:3px}
+  .thesis{font-size:13px;line-height:1.5;margin-top:9px;color:#c9ced3}
+  .risk{font-size:12px;line-height:1.5;margin-top:9px;color:#9aa1a8;border-left:2px solid #3a3f46;padding-left:10px}
+  .pal{display:flex;gap:5px;margin-top:12px}
+  .pal i{width:20px;height:20px;border-radius:3px;border:1px solid rgba(255,255,255,.14)}
+  .open{display:inline-block;margin-top:12px;font-size:12px;color:#7fa8a2;text-decoration:none;border-bottom:1px solid #3a4c4a}
+  .demoted{margin-top:44px;border-top:1px solid #2c3036;padding-top:22px}
+  .demoted h3{font-size:12px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#6f767d;margin-bottom:14px}
+  .dgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px}
+  .d{background:#1e2126;border:1px solid #2c3036;border-radius:8px;padding:13px 15px}
+  .d b{display:block;font-size:13px;font-weight:600}
+  .d p{font-size:12px;line-height:1.5;color:#9aa1a8;margin-top:6px}
+  .d .kept{color:#7fa8a2;margin-top:7px;font-size:11.5px}
+  .note{margin-top:40px;font-size:12px;color:#6f767d;max-width:80ch;line-height:1.6}
+</style>
+</head>
+<body>
+<h1>Weight Tracker — ¿Qué dirección construimos?</h1>
+<p class="lede">Cuatro direcciones visuales, la misma pantalla (la hoja de pesaje que usa quien registra), los mismos datos de demostración. Elegí la que quieras construir; las demás siguen disponibles. Todos los datos mostrados son sintéticos.</p>
+<div class="grid">
+  <figure>
+    <div class="shot"><iframe src="assigned.html" title="Ficha de herbario"></iframe></div>
+    <figcaption>
+      <span class="kicker roll">The roll</span>
+      <h2>Ficha de herbario</h2>
+      <p class="lineage">Lámina de archivo con etiqueta mecanografiada · una línea de tinta dibujada a mano</p>
+      <p class="thesis">Cada miembro es una ficha: un bloque de etiqueta con nombre, unidad, última medición y quién la registró; y un único trazo de tinta que cruza el campo rayado — la tendencia. El grupo es un cajón de fichas, no un panel de cuerpos.</p>
+      <p class="risk">Riesgo: si el rayado y la etiqueta se leen como “papel de gráfico clínico”, pierde el calor y gana la Edisona. La hoja verde-grey y el verde apagado lo mantienen en archivo doméstico.</p>
+      <div class="pal"><i style="background:#e7e8e1"></i><i style="background:#f1f2ec"></i><i style="background:#20241f"></i><i style="background:#4a6b4f"></i><i style="background:#8a4436"></i></div>
+      <a class="open" href="assigned.html" target="_blank">Abrir a 390 px →</a>
+    </figcaption>
+  </figure>
+
+  <figure>
+    <div class="shot"><iframe src="model-pick.html" title="Álbum de familia"></iframe></div>
+    <figcaption>
+      <span class="kicker pick">Impeccable’s pick</span>
+      <h2>Álbum de familia</h2>
+      <p class="lineage">Página de álbum con esquineras metálicas y pie de foto manuscrito</p>
+      <p class="thesis">La app como álbum: cada persona es una lámina montada con esquineras, con su avatar —nunca su cuerpo— y una franja de pie de foto con la fecha. El número es una cifra grande; el historial son tiras de fecha.</p>
+      <p class="risk">Riesgo: es la dirección más obvia para “app de familia” — el riesgo es volverse un álbum que guarde cuerpos como recuerdos en vez de fichas que guardan datos.</p>
+      <div class="pal"><i style="background:#1c1e20"></i><i style="background:#26292b"></i><i style="background:#eceae5"></i><i style="background:#7fa8a2"></i><i style="background:#b9bcc0"></i></div>
+      <a class="open" href="model-pick.html" target="_blank">Abrir a 390 px →</a>
+    </figcaption>
+  </figure>
+
+  <figure>
+    <div class="shot"><iframe src="challenger-ticket-wallet.html" title="Cartera de cupones"></iframe></div>
+    <figcaption>
+      <span class="kicker alt">Alternativa</span>
+      <h2>Cartera de cupones</h2>
+      <p class="lineage">Cupón de viaje en papel blanco, azul marino y rojo, al carbón y troquel</p>
+      <p class="thesis">Cada pesaje es un cupón con línea de troquel: campos mecanografiados, la cifra al carbón morado, y un estado estampado. El estado se estampa sobre el comprobante, nunca se desvanece.</p>
+      <p class="risk">Riesgo: el troquel y el cupón rozan la regla: el estado debe desaparecer, no estamparse. Además, el mundo de viajes no es el de la familia: compite en claridad, no en identificación.</p>
+      <div class="pal"><i style="background:#fbfaf7"></i><i style="background:#16243f"></i><i style="background:#b4241f"></i><i style="background:#4a3a63"></i></div>
+      <a class="open" href="challenger-ticket-wallet.html" target="_blank">Abrir a 390 px →</a>
+    </figcaption>
+  </figure>
+
+  <figure>
+    <div class="shot"><iframe src="challenger-dense-web.html" title="Mosaico de alta densidad"></iframe></div>
+    <figcaption>
+      <span class="kicker alt">Alternativa</span>
+      <h2>Mosaico de alta densidad</h2>
+      <p class="lineage">Módulos en recuadro con filetes de un píxel y pestañas rojas de señal</p>
+      <p class="thesis">Densidad: la hoja entera es un mosaico de módulos con pestañas, cada uno con su trabajo. El rojo se usa solo cuando significa algo. Nada de espacio desperdiciado.</p>
+      <p class="risk">Riesgo: a 360 px la densidad puede pasar a ilegible, y el rojo como color de marca choca con el tono neutro que exige el producto. Compite fuerte en claridad, flojo en identificación.</p>
+      <div class="pal"><i style="background:#ffffff"></i><i style="background:#111111"></i><i style="background:#d92b1f"></i><i style="background:#f4f4f4"></i></div>
+      <a class="open" href="challenger-dense-web.html" target="_blank">Abrir a 390 px →</a>
+    </figcaption>
+  </figure>
+</div>
+
+<div class="demoted">
+  <h3>Descartadas — sigue disponible si la querés</h3>
+  <div class="dgrid">
+    <div class="d"><b>Manual con lámina de acetato</b><p>Se fusiona mal: un mundo de software, no de familia, y el riel de pestañas organiza la pantalla, que es exactamente lo que una app de operación no puede tomar prestado.</p><p class="kept">Se conserva: el estado tiene presencia material, no solo un color.</p></div>
+    <div class="d"><b>Feed vertical de una sola pieza</b><p>Es el mundo que el producto excluye explícitamente: feed social, un contenido por pantalla, sin tablero.</p><p class="kept">Se conserva: cambiar de persona es un corte seco, nunca un fundido.</p></div>
+    <div class="d"><b>Catálogo de fábrica sobre fondo mate</b><p>Falla en claridad: esconder los nombres detrás de tiras de color contradice la regla de etiquetas inequívocas, y el blanco y negro puro impide colores de estado.</p><p class="kept">Se conserva: un solo trazo domina la hoja; el resto se queda quieto.</p></div>
+    <div class="d"><b>Datamática de campos de barras</b><p>Falla en los dos ejes: un arte experimental no es el hogar de esta familia, y sin color no hay forma de mostrar “hacia tu objetivo” o “en cola”.</p><p class="kept">Se conserva: las cifras se leen como columnas, no como frases.</p></div>
+  </div>
+</div>
+
+<p class="note">Al elegir, la dirección elegida pasa a ser el sistema visual del producto entero: la misma paleta, la misma tipografía, la misma densidad y el mismo gesto firma en las ocho pantallas que faltan. Si más adelante querés cambiar, se cambia en un solo lugar.</p>
+</body>
+</html>
