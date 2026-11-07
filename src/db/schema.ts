@@ -1,5 +1,18 @@
-import { relations } from "drizzle-orm"
-import { boolean, index, pgTable, text, timestamp, uniqueIndex, uuid } from "drizzle-orm/pg-core"
+import { relations, sql } from "drizzle-orm"
+import {
+  boolean,
+  index,
+  numeric,
+  pgTable,
+  primaryKey,
+  text,
+  timestamp,
+  uniqueIndex,
+  uuid,
+} from "drizzle-orm/pg-core"
+
+import { type GoalDirection } from "@/features/goals/direction"
+import { type WeightUnit } from "@/lib/weight-units"
 
 export const user = pgTable("user", {
   id: text("id").primaryKey(),
@@ -69,15 +82,62 @@ export const profiles = pgTable(
     id: uuid("id").primaryKey().defaultRandom(),
     userId: text("user_id").references(() => user.id, { onDelete: "cascade" }),
     displayName: text("display_name").notNull(),
-    unit: text("unit").default("kg").notNull(),
+    unit: text("unit").$type<WeightUnit>().default("kg").notNull(),
     avatarEmoji: text("avatar_emoji"),
     isDependent: boolean("is_dependent").default(false).notNull(),
     createdAt: timestamp("created_at").defaultNow().notNull(),
     updatedAt: timestamp("updated_at").defaultNow().notNull(),
   },
   (table) => [
-    uniqueIndex("profiles_user_id_unique").on(table.userId),
+    // A login owns at most one profile of its own; managed profiles keep user_id null.
+    uniqueIndex("profiles_own_user_id_unique")
+      .on(table.userId)
+      .where(sql`${table.userId} is not null`),
     index("profiles_user_id_idx").on(table.userId),
+  ],
+)
+
+export const profileManagers = pgTable(
+  "profile_managers",
+  {
+    profileId: uuid("profile_id")
+      .notNull()
+      .references(() => profiles.id, { onDelete: "cascade" }),
+    userId: text("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+  },
+  (table) => [
+    primaryKey({ columns: [table.profileId, table.userId] }),
+    index("profile_managers_user_id_idx").on(table.userId),
+  ],
+)
+
+export const goals = pgTable(
+  "goals",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    profileId: uuid("profile_id")
+      .notNull()
+      .references(() => profiles.id, { onDelete: "cascade" }),
+    direction: text("direction").$type<GoalDirection>().notNull(),
+    targetWeightKg: numeric("target_weight_kg", { precision: 6, scale: 2, mode: "number" }).notNull(),
+    bandKg: numeric("band_kg", { precision: 4, scale: 2, mode: "number" }),
+    baselineWeightKg: numeric("baseline_weight_kg", {
+      precision: 6,
+      scale: 2,
+      mode: "number",
+    }).notNull(),
+    baselineAt: timestamp("baseline_at").notNull(),
+    active: boolean("active").default(true).notNull(),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+  },
+  (table) => [
+    uniqueIndex("goals_one_active_per_profile")
+      .on(table.profileId)
+      .where(sql`${table.active} = true`),
+    index("goals_profile_id_idx").on(table.profileId),
   ],
 )
 
@@ -85,6 +145,7 @@ export const userRelations = relations(user, ({ many }) => ({
   sessions: many(session),
   accounts: many(account),
   profiles: many(profiles),
+  managedProfiles: many(profileManagers),
 }))
 
 export const sessionRelations = relations(session, ({ one }) => ({
@@ -95,10 +156,22 @@ export const accountRelations = relations(account, ({ one }) => ({
   user: one(user, { fields: [account.userId], references: [user.id] }),
 }))
 
-export const profilesRelations = relations(profiles, ({ one }) => ({
+export const profilesRelations = relations(profiles, ({ one, many }) => ({
   user: one(user, { fields: [profiles.userId], references: [user.id] }),
+  managers: many(profileManagers),
+  goals: many(goals),
+}))
+
+export const profileManagersRelations = relations(profileManagers, ({ one }) => ({
+  profile: one(profiles, { fields: [profileManagers.profileId], references: [profiles.id] }),
+  user: one(user, { fields: [profileManagers.userId], references: [user.id] }),
+}))
+
+export const goalsRelations = relations(goals, ({ one }) => ({
+  profile: one(profiles, { fields: [goals.profileId], references: [profiles.id] }),
 }))
 
 export type User = typeof user.$inferSelect
 export type Session = typeof session.$inferSelect
 export type Profile = typeof profiles.$inferSelect
+export type Goal = typeof goals.$inferSelect

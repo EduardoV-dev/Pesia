@@ -32,7 +32,7 @@ goals (
   id                 uuid primary key,
   profile_id         uuid not null references profiles(id) on delete cascade,
   direction          text not null,              -- 'lose' | 'gain' | 'maintain'
-  target_weight_kg   numeric(6,2) null,          -- null when direction = 'maintain'
+  target_weight_kg   numeric(6,2) not null,       -- band centre when direction = 'maintain'
   band_kg            numeric(4,2) null,          -- tolerance when direction = 'maintain'
   baseline_weight_kg numeric(6,2) not null,      -- weight at the moment the goal was set
   baseline_at        timestamptz not null,
@@ -60,16 +60,16 @@ goals (
 
 ## Acceptance criteria
 
-- [ ] **US-2.1** A signed-in user can create their own profile.
-- [ ] **US-2.2** A profile's display unit can be kg or lb, and changes what the app shows and accepts.
-- [ ] **US-2.3** A profile can set a target weight and the direction is derived from it.
-- [ ] **US-2.4** A maintain goal stores a band and reports 100% while inside it.
-- [ ] **US-2.5** Changing a target resets the baseline to the current weight.
-- [ ] **US-2.6** A signed-in user can create a managed profile for someone without a login.
-- [ ] **US-2.7** A dependent profile cannot have a target, a BMI or a ranking position.
-- [ ] **US-2.8** A user can switch between the profiles they manage, and subsequent entries follow the active profile.
-- [ ] **US-2.9** Profile display name and avatar can be edited.
-- [ ] **US-2.10** A newly created profile is invisible to every group until its owner joins one.
+- [x] **US-2.1** A signed-in user can create their own profile.
+- [x] **US-2.2** A profile's display unit can be kg or lb, and changes what the app shows and accepts.
+- [x] **US-2.3** A profile can set a target weight and the direction is derived from it.
+- [x] **US-2.4** A maintain goal stores a band and reports 100% while inside it.
+- [x] **US-2.5** Changing a target resets the baseline to the current weight.
+- [x] **US-2.6** A signed-in user can create a managed profile for someone without a login.
+- [x] **US-2.7** A dependent profile cannot have a target, a BMI or a ranking position.
+- [x] **US-2.8** A user can switch between the profiles they manage, and subsequent entries follow the active profile.
+- [x] **US-2.9** Profile display name and avatar can be edited.
+- [x] **US-2.10** A newly created profile is invisible to every group until its owner joins one.
 - [ ] A profile with no login is never exposed to anyone other than the people who manage it.
 
 ## Dependencies

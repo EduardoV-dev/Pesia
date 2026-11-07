@@ -1,9 +1,9 @@
 import { randomUUID } from "node:crypto"
 
-import { eq } from "drizzle-orm"
+import { eq, inArray } from "drizzle-orm"
 
 import { db } from "@/db/client"
-import { profiles, session, user, type Profile } from "@/db/schema"
+import { profileManagers, profiles, session, user, type Profile } from "@/db/schema"
 
 export type TestUser = {
   readonly id: string
@@ -14,6 +14,10 @@ export type TestSession = {
   readonly token: string
   readonly userId: string
 }
+
+export type TestProfileOverrides = Partial<
+  Pick<Profile, "displayName" | "unit" | "isDependent" | "avatarEmoji">
+>
 
 export async function createTestUser(displayName = "Persona de prueba"): Promise<TestUser> {
   const id = randomUUID()
@@ -44,15 +48,31 @@ export async function createTestSession(testUser: TestUser): Promise<TestSession
 
 export async function createTestProfile(
   testUser: TestUser,
-  overrides: Partial<Pick<Profile, "displayName" | "unit" | "isDependent">> = {},
+  overrides: TestProfileOverrides = {},
+): Promise<Profile> {
+  return insertTestProfile(testUser.id, testUser.id, overrides)
+}
+
+export async function createTestManagedProfile(
+  testUser: TestUser,
+  overrides: TestProfileOverrides = {},
+): Promise<Profile> {
+  return insertTestProfile(null, testUser.id, overrides)
+}
+
+async function insertTestProfile(
+  userId: string | null,
+  managerId: string,
+  overrides: TestProfileOverrides,
 ): Promise<Profile> {
   const [profile] = await db
     .insert(profiles)
     .values({
-      userId: testUser.id,
+      userId,
       displayName: overrides.displayName ?? "Persona de prueba",
       unit: overrides.unit ?? "kg",
       isDependent: overrides.isDependent ?? false,
+      avatarEmoji: overrides.avatarEmoji ?? null,
     })
     .returning()
 
@@ -60,11 +80,27 @@ export async function createTestProfile(
     throw new Error("No se pudo crear el perfil de prueba.")
   }
 
+  await db.insert(profileManagers).values({ profileId: profile.id, userId: managerId })
+
   return profile
 }
 
+export async function deleteTestProfile(profileId: string): Promise<void> {
+  await db.delete(profiles).where(eq(profiles.id, profileId))
+}
+
 export async function deleteTestUser(testUser: TestUser): Promise<void> {
+  const managedProfiles = await db
+    .select({ profileId: profileManagers.profileId })
+    .from(profileManagers)
+    .where(eq(profileManagers.userId, testUser.id))
+
+  const managedProfileIds = managedProfiles.map((managedProfile) => managedProfile.profileId)
+
+  if (managedProfileIds.length > 0) {
+    await db.delete(profiles).where(inArray(profiles.id, managedProfileIds))
+  }
+
   await db.delete(session).where(eq(session.userId, testUser.id))
-  await db.delete(profiles).where(eq(profiles.userId, testUser.id))
   await db.delete(user).where(eq(user.id, testUser.id))
 }

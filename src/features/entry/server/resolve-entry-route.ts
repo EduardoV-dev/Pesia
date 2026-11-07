@@ -1,7 +1,7 @@
 import "server-only"
 
 import { getSession } from "@/auth/session"
-import { getProfileByUserId } from "@/features/profiles/server/get-profile-by-user-id"
+import { getSelfProfile } from "@/features/profiles/server/profile-access"
 
 export async function resolveEntryRoute(): Promise<string> {
   const session = await getSession()
@@ -10,7 +10,7 @@ export async function resolveEntryRoute(): Promise<string> {
     return "/sign-in"
   }
 
-  const profile = await getProfileByUserId(session.user.id)
+  const profile = await getSelfProfile(session.user.id)
 
   if (!profile) {
     return "/onboarding"

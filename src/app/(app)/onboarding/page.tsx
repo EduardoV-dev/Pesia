@@ -2,13 +2,13 @@ import { redirect } from "next/navigation"
 
 import { requireSession } from "@/auth/session"
 import { OnboardingForm } from "@/features/onboarding/components/onboarding-form"
-import { getProfileByUserId } from "@/features/profiles/server/get-profile-by-user-id"
+import { getSelfProfile } from "@/features/profiles/server/profile-access"
 
 export const instant = false
 
 export default async function OnboardingPage() {
   const session = await requireSession()
-  const profile = await getProfileByUserId(session.user.id)
+  const profile = await getSelfProfile(session.user.id)
 
   if (profile) {
     redirect("/home")

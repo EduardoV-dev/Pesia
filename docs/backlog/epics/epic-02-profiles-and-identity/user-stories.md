@@ -17,9 +17,9 @@
 
 **Acceptance criteria**
 
-- [ ] Given I am signed in, when I complete onboarding, then a profile is created and linked to my account.
-- [ ] Given I already have a profile, when I sign in again, then no second profile is created.
-- [ ] My profile is linked to my login and is only visible to me and to people I explicitly grant access to.
+- [x] Given I am signed in, when I complete onboarding, then a profile is created and linked to my account.
+- [x] Given I already have a profile, when I sign in again, then no second profile is created.
+- [x] My profile is linked to my login and is only visible to me and to people I explicitly grant access to.
 
 **Story points:** 2
 
@@ -31,9 +31,9 @@
 
 **Acceptance criteria**
 
-- [ ] I can set my display unit to kg or lb at any time.
-- [ ] Entered values are stored canonically in kg and converted for display, so switching units never changes my history.
-- [ ] Switching units preserves my existing entries exactly.
+- [x] I can set my display unit to kg or lb at any time.
+- [x] Entered values are stored canonically in kg and converted for display, so switching units never changes my history.
+- [x] Switching units preserves my existing entries exactly.
 
 **Story points:** 2
 
@@ -45,10 +45,10 @@
 
 **Acceptance criteria**
 
-- [ ] Given I enter a target below my current weight, then my goal direction is "lose".
-- [ ] Given I enter a target above my current weight, then my goal direction is "gain".
-- [ ] The app never suggests a target, and never presumes my goal is to lose weight.
-- [ ] I can choose not to set a target at all; my trend still works without one.
+- [x] Given I enter a target below my current weight, then my goal direction is "lose".
+- [x] Given I enter a target above my current weight, then my goal direction is "gain".
+- [x] The app never suggests a target, and never presumes my goal is to lose weight.
+- [x] I can choose not to set a target at all; my trend still works without one.
 
 **Story points:** 2
 
@@ -60,9 +60,9 @@
 
 **Acceptance criteria**
 
-- [ ] Given my direction is "maintain", then I set a target and a band width.
-- [ ] Given my current weight is inside the band, then my progress reads 100%.
-- [ ] Given my current weight is outside the band, then the app reports the distance to the band without moralising it.
+- [x] Given my direction is "maintain", then I set a target and a band width.
+- [x] Given my current weight is inside the band, then my progress reads 100%.
+- [x] Given my current weight is outside the band, then the app reports the distance to the band without moralising it.
 
 **Story points:** 2
 
@@ -74,9 +74,9 @@
 
 **Acceptance criteria**
 
-- [ ] Given I change my target, then a new goal becomes active and the previous one is kept as history.
-- [ ] Given I change my target, then my baseline is reset to my weight at the moment of the change, and progress restarts at 0%.
-- [ ] Progress never displays a value outside 0–100%.
+- [x] Given I change my target, then a new goal becomes active and the previous one is kept as history.
+- [x] Given I change my target, then my baseline is reset to my weight at the moment of the change, and progress restarts at 0%.
+- [x] Progress never displays a value outside 0–100%.
 
 **Story points:** 3
 
@@ -88,10 +88,10 @@
 
 **Acceptance criteria**
 
-- [ ] I can create a profile that has no login attached.
-- [ ] The profile has a display name, a unit, and an optional target, exactly like any other.
-- [ ] The profile appears in my profile switcher and nowhere else.
-- [ ] The profile cannot be signed into — there is no credential for it.
+- [x] I can create a profile that has no login attached.
+- [x] The profile has a display name, a unit, and an optional target, exactly like any other.
+- [x] The profile appears in my profile switcher and nowhere else.
+- [x] The profile cannot be signed into — there is no credential for it.
 
 **Story points:** 2
 
@@ -103,10 +103,10 @@
 
 **Acceptance criteria**
 
-- [ ] I can create a dependent profile that has no login.
-- [ ] A dependent profile offers no target, no progress percentage, no BMI and no ranking position.
-- [ ] A dependent profile shows a weight history and a trend direction only.
-- [ ] A dependent profile cannot be converted into a non-dependent profile without creating a new profile.
+- [x] I can create a dependent profile that has no login.
+- [x] A dependent profile offers no target, no progress percentage, no BMI and no ranking position.
+- [x] A dependent profile shows a weight history and a trend direction only.
+- [x] A dependent profile cannot be converted into a non-dependent profile without creating a new profile.
 
 **Story points:** 2
 
@@ -118,10 +118,10 @@
 
 **Acceptance criteria**
 
-- [ ] The switcher lists every profile I manage, with an unambiguous label for each.
-- [ ] Switching is one tap and takes effect immediately.
-- [ ] The entry form targets the active profile, and the screen shows whose weight I am about to record.
-- [ ] Switching to a dependent profile shows that profile's constraints (no target, no progress).
+- [x] The switcher lists every profile I manage, with an unambiguous label for each.
+- [x] Switching is one tap and takes effect immediately.
+- [x] The entry form targets the active profile, and the screen shows whose weight I am about to record.
+- [x] Switching to a dependent profile shows that profile's constraints (no target, no progress).
 
 **Story points:** 2
 
@@ -133,9 +133,9 @@
 
 **Acceptance criteria**
 
-- [ ] I can change my display name and avatar at any time.
-- [ ] A blank display name is rejected with a readable message.
-- [ ] My display name is what other members see in the group.
+- [x] I can change my display name and avatar at any time.
+- [x] A blank display name is rejected with a readable message.
+- [x] My display name is what other members see in the group.
 
 **Story points:** 1
 
@@ -147,8 +147,8 @@
 
 **Acceptance criteria**
 
-- [ ] A newly created profile is not visible in any group until I am added to one.
-- [ ] Creating a profile notifies nobody.
-- [ ] Only the people who manage a profile can see that it exists before it joins a group.
+- [x] A newly created profile is not visible in any group until I am added to one.
+- [x] Creating a profile notifies nobody.
+- [x] Only the people who manage a profile can see that it exists before it joins a group.
 
 **Story points:** 1
