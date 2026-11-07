@@ -3,7 +3,7 @@ import { randomUUID } from "node:crypto"
 import postgres from "postgres"
 import { chromium } from "playwright-core"
 
-const BASE_URL = process.env.BASE_URL ?? "http://localhost:3010"
+const BASE_URL = process.env.BASE_URL ?? "http://localhost:3015"
 const DATABASE_URL =
   process.env.DATABASE_URL ?? "postgresql://postgres:postgres@localhost:5435/weight_tracker"
 const AUTH_SECRET = process.env.BETTER_AUTH_SECRET ?? ""

@@ -3,7 +3,7 @@ import { afterEach, describe, expect, it, vi } from "vitest"
 const VALID_VALUES = {
   DATABASE_URL: "postgresql://postgres:postgres@localhost:5435/weight_tracker_test",
   BETTER_AUTH_SECRET: "secreto-de-prueba-suficientemente-largo-32",
-  BETTER_AUTH_URL: "http://localhost:3010",
+  BETTER_AUTH_URL: "http://localhost:3015",
   GOOGLE_CLIENT_ID: "cliente-de-prueba",
   GOOGLE_CLIENT_SECRET: "secreto-de-prueba",
 } as const

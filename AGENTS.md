@@ -145,7 +145,7 @@ Read them; do not work from memory.
 | ------------- | ------------------------------------------------------------------------------------- |
 | Framework     | Next.js 16.4.5, App Router, Turbopack, React 19.3.1                                   |
 | Package mgr   | pnpm 12 — use `pnpm run <script>`, never `npm`                                        |
-| Ports         | Next.js always on **3010** (fixed in the `dev`/`start` scripts); Postgres on **5435** |
+| Ports         | Next.js always on **3015** (fixed in the `dev`/`start` scripts); Postgres on **5435** |
 | Language      | TypeScript                                                                            |
 | Styling       | Tailwind v4 + shadcn/ui — CSS variables in `globals.css`, **no** `tailwind.config.js` |
 | Auth          | Better Auth 1.7.18 — adapter import path is `better-auth/adapters/drizzle`            |
@@ -169,7 +169,7 @@ Never commit real values. `.env.example` documents the contract — copy it to
 ```
 DATABASE_URL                 # postgres://user:pass@localhost:5435/weight_tracker
 BETTER_AUTH_SECRET           # openssl rand -base64 32
-BETTER_AUTH_URL              # http://localhost:3010 in dev
+BETTER_AUTH_URL              # http://localhost:3015 in dev
 GOOGLE_CLIENT_ID             # Epic 1
 GOOGLE_CLIENT_SECRET         # Epic 1
 NEXT_PUBLIC_APP_URL          # Epic 1

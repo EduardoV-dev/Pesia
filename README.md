@@ -41,7 +41,7 @@ cp .env.example .env.local
 
 Fill in the values. `DATABASE_URL` points at the local container; the Google values come
 from a Google Cloud OAuth client whose authorised redirect URI is
-`http://localhost:3010/api/auth/callback/google`.
+`http://localhost:3015/api/auth/callback/google`.
 
 Generate the auth secret with:
 
@@ -73,7 +73,7 @@ The schema is defined in code in `src/db/schema.ts`; the generated SQL lives in
 pnpm run dev
 ```
 
-The app is at `http://localhost:3010` — the port is fixed in the `dev` and `start`
+The app is at `http://localhost:3015` — the port is fixed in the `dev` and `start`
 scripts, so it never moves.
 
 ---
@@ -93,7 +93,7 @@ scripts, so it never moves.
 | `pnpm run db:studio`   | Drizzle Studio                                                                  |
 
 `pnpm run check:ui` reads `BASE_URL`, `DATABASE_URL` and `BETTER_AUTH_SECRET` from the
-environment; it defaults to `http://localhost:3010`.
+environment; it defaults to `http://localhost:3015`.
 
 ---
 
