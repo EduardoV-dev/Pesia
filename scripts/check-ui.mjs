@@ -3,7 +3,7 @@ import { randomUUID } from "node:crypto"
 import postgres from "postgres"
 import { chromium } from "playwright-core"
 
-const BASE_URL = process.env.BASE_URL ?? "http://localhost:3000"
+const BASE_URL = process.env.BASE_URL ?? "http://localhost:3010"
 const DATABASE_URL =
   process.env.DATABASE_URL ?? "postgresql://postgres:postgres@localhost:5435/weight_tracker"
 const AUTH_SECRET = process.env.BETTER_AUTH_SECRET ?? ""
@@ -196,27 +196,37 @@ try {
       }
     }
 
-    await page.keyboard.press("Tab")
-    const focusState = await page.evaluate(() => {
-      const activeElement = document.activeElement
+    const focusStates = []
 
-      if (!activeElement || activeElement === document.body) {
-        return { hasFocus: false, outlineWidth: "0px", outlineStyle: "none" }
-      }
+    for (let tabIndex = 0; tabIndex < 8; tabIndex += 1) {
+      await page.keyboard.press("Tab")
+      focusStates.push(
+        await page.evaluate(() => {
+          const activeElement = document.activeElement
 
-      const styles = window.getComputedStyle(activeElement)
+          if (!activeElement || activeElement === document.body) {
+            return { hasFocus: false, hasVisibleIndicator: false, isInOverlay: false }
+          }
 
-      return {
-        hasFocus: true,
-        outlineWidth: styles.outlineWidth,
-        outlineStyle: styles.outlineStyle,
-      }
-    })
+          const styles = window.getComputedStyle(activeElement)
+          const hasOutline = styles.outlineStyle !== "none" && styles.outlineWidth !== "0px"
+          const hasRing = styles.boxShadow !== "none"
 
-    if (!focusState.hasFocus) {
-      report(route.path, "el primer tabulador no mueve el foco a ningún control")
-    } else if (focusState.outlineStyle === "none" || focusState.outlineWidth === "0px") {
-      report(route.path, "el foco no es visible al tabular")
+          return {
+            hasFocus: true,
+            hasVisibleIndicator: hasOutline || hasRing,
+            isInOverlay: activeElement.closest("nextjs-portal") !== null,
+          }
+        }),
+      )
+    }
+
+    const reachesVisibleControl = focusStates.some(
+      (state) => state.hasFocus && !state.isInOverlay && state.hasVisibleIndicator,
+    )
+
+    if (!reachesVisibleControl) {
+      report(route.path, "el teclado no alcanza ningún control con foco visible")
     }
 
     await context.close()

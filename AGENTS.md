@@ -144,6 +144,8 @@ Read them; do not work from memory.
 | Concern       | Choice                                                                                |
 | ------------- | ------------------------------------------------------------------------------------- |
 | Framework     | Next.js 16.4.5, App Router, Turbopack, React 19.3.1                                   |
+| Package mgr   | pnpm 12 — use `pnpm run <script>`, never `npm`                                        |
+| Ports         | Next.js always on **3010** (fixed in the `dev`/`start` scripts); Postgres on **5435** |
 | Language      | TypeScript                                                                            |
 | Styling       | Tailwind v4 + shadcn/ui — CSS variables in `globals.css`, **no** `tailwind.config.js` |
 | Auth          | Better Auth 1.7.18 — adapter import path is `better-auth/adapters/drizzle`            |
@@ -161,14 +163,13 @@ It is `better-auth/adapters/drizzle` in 1.7.x — verify before wiring.
 
 ## 5. Environment variables
 
-Never commit real values. `env.example` documents the contract — copy it to
-`.env.local` and fill it in. It is deliberately **not** named `.env.example`: the
-workspace permission rules deny writes to `.env*` paths.
+Never commit real values. `.env.example` documents the contract — copy it to
+`.env.local` and fill it in.
 
 ```
-DATABASE_URL                 # postgres://user:pass@host:5432/db
+DATABASE_URL                 # postgres://user:pass@localhost:5435/weight_tracker
 BETTER_AUTH_SECRET           # openssl rand -base64 32
-BETTER_AUTH_URL              # http://localhost:3000 in dev
+BETTER_AUTH_URL              # http://localhost:3010 in dev
 GOOGLE_CLIENT_ID             # Epic 1
 GOOGLE_CLIENT_SECRET         # Epic 1
 NEXT_PUBLIC_APP_URL          # Epic 1
@@ -186,7 +187,7 @@ EMAIL_FROM                   # Epic 7, a verified sending domain
 1. Every acceptance criterion of its user stories passes, and the epic's own acceptance
    list is ticked in `docs/backlog/epics/<epic>/epic.md`.
 2. Guardrails the epic touches are covered by a test or an explicit copy review.
-3. `npm run lint` and `npm run typecheck` pass with no errors.
+3. `pnpm run lint` and `pnpm run typecheck` pass with no errors.
 4. The OpenSpec change is archived and `openspec/specs/` reflects the behaviour.
 5. The work is committed on `development` and reported to the user with what shipped,
    what is verified and what is still open.
