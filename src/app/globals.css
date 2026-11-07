@@ -96,6 +96,7 @@
 
   --radius-card: 1.5rem;
   --radius-control: 1rem;
+  --radius-pill: 999px;
 }
 
 body {

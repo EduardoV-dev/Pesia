@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation"
 
-import { resolveEntryRoute } from "@/features/entry/server/resolve-entry-route"
+import { resolveEntryRoute } from "@/features/entries/server/resolve-entry-route"
 
 export const instant = false
 

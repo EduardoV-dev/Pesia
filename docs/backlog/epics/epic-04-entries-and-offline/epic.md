@@ -16,16 +16,19 @@ Anybody with permission can record a weigh-in, wherever they are — with or wit
 
 ```sql
 entries (
-  id                 uuid primary key,          -- generated on the client
+  id                 uuid primary key,          -- generated on the client (no server default)
   profile_id         uuid not null references profiles(id) on delete cascade,
+  group_id           uuid not null references groups(id) on delete cascade,
   weight_kg          numeric(6,2) not null,      -- canonical storage
   measured_at        timestamptz not null,       -- when the person stood on the scale
-  recorded_at        timestamptz not null default now(),
+  recorded_at        timestamptz not null,       -- when it was typed (client clock)
   recorded_by_user_id text not null,             -- permanent attribution, never cascades
+  recorded_by_name   text not null,              -- display name captured at insert, survives login deletion
   note               text null,                  -- private to the author, always
   deleted_at         timestamptz null,
   edited_at          timestamptz null,
-  edited_by_user_id  text null
+  edited_by_user_id  text null,                  -- same permanence rules as the recorder
+  edited_by_name     text null
 )
 ```
 
@@ -60,20 +63,84 @@ Three decisions worth stating out loud:
 - Scale-device import, photos or notes beyond a private text field
 - Bulk editing, backfilling a year of history in one action — entries are backdated individually
 
+## Manual session checklist (US-4.2 / US-4.10, Playwright-style)
+
+Executed once per epic against a dev build (Chromium at 390px, plus the automated
+`scripts/check-ui.mjs` route pass at 360px):
+
+1. **Recorder logs the person next to them.** With a Logger session on `home`, select
+   the other member's chip, type the weight (comma or dot accepted), press *Guardar
+   peso* → confirmation names that person, the day sheet marks them done with the
+   visible weight, and a `POST /api/entries` lands with a stored row whose
+   `measured_at` = today and `recorded_by_name` = the recorder's profile name.
+2. **Permission gap is impossible from the UI and refused by direct request.** The
+   selector only offers profiles under `can_log_for`; a direct `POST /api/entries`
+   for an unpermitted subject returns `failed` with
+   "No tenés permiso para registrar el peso de esta persona." and stores nothing
+   (also locked by `entry-writes.test.ts`).
+3. **Record for several people in one session.** After each save the sheet stays on
+   the same person until the explicit *Pasar a …* action, and previews the next
+   unweighed roster member.
+4. **No connection.** With the device offline the save queues ("Pendiente de envío"),
+   a reload serves the cached offline shell with the pending badge still showing,
+   and reconnecting flushes: the queued row appears server-side exactly once
+   (verified in `/tmp/opencode`-style smoke runs; covered by the queue tests for
+   ordering, batching and idempotence).
+5. **Correction and deletion with attribution.** From the member's history page,
+   the recorder edits the weight or backdates the day ("Medido el …" changes and
+   "Registrado el …" keeps its original instant), or deletes with the confirmation
+   dialog; a server-side check shows the row flipped `deleted_at` and the history
+   renders no placeholder.
+
+## Copy review (G2 / G3 / G5) — every Spanish string added in this epic
+
+Reviewed string by string against the guardrails: no single-reading deltas, no
+pass/fail verdicts, no nudges, no moralised verbs, and no red/green semantics
+anywhere. Notables:
+
+- "El peso debe estar entre 1 y 300 kg." · "Escribí un número." · "La nota es muy
+  larga." · "El día de la pesada no puede ser futuro." — neutral range messages,
+  the range is stated, nothing is clamped.
+- "No tenés permiso para registrar el peso de esta persona.", "No sos parte de este
+  grupo.", "Esa persona no está en este grupo." — the refusal states its reason,
+  no verdict on the person.
+- "Pendiente de envío" / "Guardado" / "No se pudo sincronizar" (+ reason) /
+  "N pesadas sin sincronizar — se envían cuando vuelva internet." — honest queue
+  states, no praise or blame.
+- "Medido el … · Registrado el …", "Registrado por … · sin cuenta activa",
+  "Corregido por … el …" — pure facts, the two readings are distinct.
+- Sheet and history verbs: "Guardar peso", "Corregir", "Eliminar", "Guardar cambio",
+  "Pasar a …", "Pesada de … lista." — task verbs only; "lista" reports completion
+  of the action, not a verdict on the person.
+- Direction language, deltas and goals are absent by design (Epic 5 owns them).
+  Result: **PASS**, no copy changes required.
+
 ## Acceptance criteria
 
-- [ ] **US-4.1** A member can record their own weight.
-- [ ] **US-4.2** A member with permission can record someone else's weight.
-- [ ] **US-4.3** A weigh-in recorded with no connection is queued and synced later.
-- [ ] **US-4.4** An entry can be backdated to the day it was actually measured.
-- [ ] **US-4.5** A typo can be corrected, and the edit is attributed.
-- [ ] **US-4.6** An entry can be deleted and leaves no placeholder.
-- [ ] **US-4.7** Anyone who can see the entry can see who recorded it.
-- [ ] **US-4.8** A private note is visible only to its author, at every visibility level.
-- [ ] **US-4.9** A member can see their own entry history.
-- [ ] **US-4.10** A queued entry syncs exactly once, no matter how many times the queue is flushed.
-- [ ] Recording an entry for someone without permission is refused server-side, not merely hidden in the UI.
-- [ ] Entries carry both timestamps and they are displayed distinctly.
+- [x] **US-4.1** A member can record their own weight. (`WeighInSheet` + `createEntry`
+      self-write; verified in smoke + `entry-writes.test.ts`)
+- [x] **US-4.2** A member with permission can record someone else's weight.
+      (`canLogFor` write check; smoke + tests)
+- [x] **US-4.3** A weigh-in recorded with no connection is queued and synced later.
+      (IndexedDB queue + flush triggers; smoke verified offline→online)
+- [x] **US-4.4** An entry can be backdated to the day it was actually measured.
+      (edit keeps `recorded_at`; `entry-writes.test.ts`)
+- [x] **US-4.5** A typo can be corrected, and the edit is attributed.
+      (`editEntry` + `assertEntryEditor`; smoke + tests)
+- [x] **US-4.6** An entry can be deleted and leaves no placeholder.
+      (soft delete filtered by the assembler; `entry-writes.test.ts`)
+- [x] **US-4.7** Anyone who can see the entry can see who recorded it.
+      (assembler shows `recordedByName`; visibility tests)
+- [x] **US-4.8** A private note is visible only to its author, at every visibility level.
+      (note withheld inside `listEntriesForViewer`; matrix tests)
+- [x] **US-4.9** A member can see their own entry history.
+      (self history section; assembler self branch)
+- [x] **US-4.10** A queued entry syncs exactly once, no matter how many times the
+      queue is flushed. (client UUID + upsert; tested flushing 3× → 1 row)
+- [x] Recording an entry for someone without permission is refused server-side, not
+      merely hidden in the UI. (write check per op; roster filters the selector too)
+- [x] Entries carry both timestamps and they are displayed distinctly.
+      (History rows render "Medido el … · Registrado el …")
 
 ## Dependencies
 

@@ -1,11 +1,14 @@
 import { notFound } from "next/navigation"
 
 import { requireSession } from "@/auth/session"
+import { EntryHistory } from "@/features/entries/components/entry-history"
+import { listEntriesForViewer } from "@/features/entries/server/entry-access"
 import { GoalForm } from "@/features/goals/components/goal-form"
 import { GoalSummary } from "@/features/goals/components/goal-summary"
 import { getActiveGoal } from "@/features/goals/server/get-active-goal"
 import { ProfileEditorForm } from "@/features/profiles/components/profile-editor-form"
 import { getProfileForManager } from "@/features/profiles/server/profile-access"
+import { getGroupsForProfile } from "@/features/groups/server/group-access"
 
 export const instant = false
 
@@ -22,7 +25,17 @@ export default async function ProfilePage({
     notFound()
   }
 
-  const goal = profile.isDependent ? null : await getActiveGoal(profile.id)
+  const [goal, entries, subjectGroups] = await Promise.all([
+    profile.isDependent ? Promise.resolve(null) : getActiveGoal(profile.id),
+    listEntriesForViewer({
+      viewerProfileId: profile.id,
+      viewerUserId: session.user.id,
+      subjectProfileId: profile.id,
+    }),
+    getGroupsForProfile(profile.id),
+  ])
+
+  const timezone = subjectGroups[0]?.timezone ?? "UTC"
 
   return (
     <main className="flex-1 px-5 pb-8">
@@ -49,6 +62,22 @@ export default async function ProfilePage({
             </div>
           </div>
         ) : null}
+      </div>
+
+      <div className="mt-5">
+        <EntryHistory
+          data={{
+            subject: {
+              profileId: profile.id,
+              displayName: profile.displayName,
+              avatarEmoji: profile.avatarEmoji,
+              unit: profile.unit,
+              isDependent: profile.isDependent,
+            },
+            timezone,
+            entries,
+          }}
+        />
       </div>
 
       {!profile.isDependent ? (

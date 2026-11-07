@@ -1,6 +1,8 @@
 import type { Metadata, Viewport } from "next"
 import { Hanken_Grotesk, Manrope } from "next/font/google"
 
+import { SwRegistrar } from "@/components/app-shell/sw-registrar"
+
 import "./globals.css"
 
 const hankenGrotesk = Hanken_Grotesk({
@@ -53,6 +55,7 @@ export default function RootLayout({
       </head>
       <body className="min-h-dvh antialiased">
         <div className="mx-auto flex min-h-dvh w-full max-w-app flex-col">{children}</div>
+        <SwRegistrar />
       </body>
     </html>
   )

@@ -211,6 +211,37 @@ export const groupSettings = pgTable("group_settings", {
   remindersEnabled: boolean("reminders_enabled").default(true).notNull(),
 })
 
+export const entries = pgTable(
+  "entries",
+  {
+    // The client generates the id, so a retried sync upserts on it instead of
+    // duplicating the weigh-in.
+    id: uuid("id").primaryKey(),
+    profileId: uuid("profile_id")
+      .notNull()
+      .references(() => profiles.id, { onDelete: "cascade" }),
+    groupId: uuid("group_id")
+      .notNull()
+      .references(() => groups.id, { onDelete: "cascade" }),
+    weightKg: numeric("weight_kg", { precision: 6, scale: 2, mode: "number" }).notNull(),
+    measuredAt: timestamp("measured_at", { withTimezone: true }).notNull(),
+    recordedAt: timestamp("recorded_at", { withTimezone: true }).notNull(),
+    // No foreign key on purpose: attribution outlives the login that recorded it.
+    recordedByUserId: text("recorded_by_user_id").notNull(),
+    recordedByName: text("recorded_by_name").notNull(),
+    editedAt: timestamp("edited_at", { withTimezone: true }),
+    editedByUserId: text("edited_by_user_id"),
+    editedByName: text("edited_by_name"),
+    note: text("note"),
+    deletedAt: timestamp("deleted_at", { withTimezone: true }),
+    createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+  },
+  (table) => [
+    index("entries_profile_id_measured_at_idx").on(table.profileId, table.measuredAt),
+    index("entries_group_id_measured_at_idx").on(table.groupId, table.measuredAt),
+  ],
+)
+
 export const invites = pgTable(
   "invites",
   {
@@ -246,6 +277,7 @@ export const profilesRelations = relations(profiles, ({ one, many }) => ({
   user: one(user, { fields: [profiles.userId], references: [user.id] }),
   managers: many(profileManagers),
   goals: many(goals),
+  entries: many(entries),
 }))
 
 export const profileManagersRelations = relations(profileManagers, ({ one }) => ({
@@ -262,6 +294,7 @@ export const groupsRelations = relations(groups, ({ many, one }) => ({
   permissions: many(canLogFor),
   settings: one(groupSettings),
   invites: many(invites),
+  entries: many(entries),
 }))
 
 export const groupMembershipsRelations = relations(groupMemberships, ({ one }) => ({
@@ -275,6 +308,11 @@ export const canLogForRelations = relations(canLogFor, ({ one }) => ({
   logger: one(profiles, { fields: [canLogFor.loggerProfileId], references: [profiles.id] }),
 }))
 
+export const entriesRelations = relations(entries, ({ one }) => ({
+  profile: one(profiles, { fields: [entries.profileId], references: [profiles.id] }),
+  group: one(groups, { fields: [entries.groupId], references: [groups.id] }),
+}))
+
 export const invitesRelations = relations(invites, ({ one }) => ({
   group: one(groups, { fields: [invites.groupId], references: [groups.id] }),
 }))
@@ -286,5 +324,6 @@ export type Goal = typeof goals.$inferSelect
 export type Group = typeof groups.$inferSelect
 export type GroupMembership = typeof groupMemberships.$inferSelect
 export type CanLogFor = typeof canLogFor.$inferSelect
+export type Entry = typeof entries.$inferSelect
 export type GroupSetting = typeof groupSettings.$inferSelect
 export type Invite = typeof invites.$inferSelect

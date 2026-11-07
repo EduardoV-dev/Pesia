@@ -151,6 +151,7 @@ const routes = [
   { path: "/groups", requiresSession: true },
   { path: `/groups/${groupId}`, requiresSession: true },
   { path: `/invite/${inviteToken}`, requiresSession: true },
+  { path: "/offline", requiresSession: false },
 ]
 
 try {

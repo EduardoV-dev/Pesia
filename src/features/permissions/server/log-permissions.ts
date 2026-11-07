@@ -36,6 +36,21 @@ export async function canLogFor({
   return Boolean(grant)
 }
 
+/** The subjects a logger may record for in a group, for the weigh-in selector. */
+export async function listLoggableSubjectIds(groupId: string, loggerProfileId: string): Promise<string[]> {
+  const rows = await db
+    .select({ subjectProfileId: canLogForRows.subjectProfileId })
+    .from(canLogForRows)
+    .where(
+      and(
+        eq(canLogForRows.groupId, groupId),
+        eq(canLogForRows.loggerProfileId, loggerProfileId),
+      ),
+    )
+
+  return rows.map((row) => row.subjectProfileId)
+}
+
 /**
  * Rebuilds the role preset rows of a group from its active memberships.
  *
