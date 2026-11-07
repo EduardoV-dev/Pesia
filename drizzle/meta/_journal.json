@@ -15,6 +15,13 @@
       "when": 1794066177546,
       "tag": "0001_bumpy_sway",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1794070016053,
+      "tag": "0002_backfill_profile_owners",
+      "breakpoints": true
     }
   ]
 }

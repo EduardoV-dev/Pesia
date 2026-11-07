@@ -34,8 +34,8 @@ export async function getProfileForManager(
   return manager?.profile ?? null
 }
 
-export async function getSelfProfile(userId: string): Promise<Profile | null> {
+export const getSelfProfile = cache(async (userId: string): Promise<Profile | null> => {
   const [profile] = await db.select().from(profiles).where(eq(profiles.userId, userId)).limit(1)
 
   return profile ?? null
-}
+})

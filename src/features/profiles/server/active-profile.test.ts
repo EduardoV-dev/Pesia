@@ -22,7 +22,11 @@ describe("pickActiveProfile", () => {
     const own = buildProfile({ id: "own", userId: "user-id" })
     const managed = buildProfile({ id: "managed" })
 
-    const activeProfile = pickActiveProfile([own, managed], "managed")
+    const activeProfile = pickActiveProfile({
+      managedProfiles: [own, managed],
+      activeProfileId: "managed",
+      selfProfile: own,
+    })
 
     expect(activeProfile?.id).toBe("managed")
   })
@@ -30,7 +34,11 @@ describe("pickActiveProfile", () => {
   it("falls back to the own profile when the cookie names an unmanaged profile", () => {
     const own = buildProfile({ id: "own", userId: "user-id" })
 
-    const activeProfile = pickActiveProfile([own], "a-profile-of-somebody-else")
+    const activeProfile = pickActiveProfile({
+      managedProfiles: [own],
+      activeProfileId: "a-profile-of-somebody-else",
+      selfProfile: own,
+    })
 
     expect(activeProfile?.id).toBe("own")
   })
@@ -39,12 +47,30 @@ describe("pickActiveProfile", () => {
     const own = buildProfile({ id: "own", userId: "user-id" })
     const managed = buildProfile({ id: "managed" })
 
-    const activeProfile = pickActiveProfile([own, managed], null)
+    const activeProfile = pickActiveProfile({
+      managedProfiles: [own, managed],
+      activeProfileId: null,
+      selfProfile: own,
+    })
+
+    expect(activeProfile?.id).toBe("own")
+  })
+
+  it("keeps the own profile reachable when it has no management link", () => {
+    const selfProfile = buildProfile({ id: "own", userId: "user-id" })
+
+    const activeProfile = pickActiveProfile({
+      managedProfiles: [],
+      activeProfileId: null,
+      selfProfile,
+    })
 
     expect(activeProfile?.id).toBe("own")
   })
 
   it("returns null when the caller manages no profile", () => {
-    expect(pickActiveProfile([], "any-profile")).toBeNull()
+    expect(
+      pickActiveProfile({ managedProfiles: [], activeProfileId: "any-profile", selfProfile: null }),
+    ).toBeNull()
   })
 })

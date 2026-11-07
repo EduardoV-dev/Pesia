@@ -60,6 +60,29 @@ export async function createTestManagedProfile(
   return insertTestProfile(null, testUser.id, overrides)
 }
 
+/** The shape Epic 1 left behind: linked to a login, with no management row. */
+export async function createTestLinkedProfileWithoutManager(
+  testUser: TestUser,
+  overrides: TestProfileOverrides = {},
+): Promise<Profile> {
+  const [profile] = await db
+    .insert(profiles)
+    .values({
+      userId: testUser.id,
+      displayName: overrides.displayName ?? "Persona de prueba",
+      unit: overrides.unit ?? "kg",
+      isDependent: overrides.isDependent ?? false,
+      avatarEmoji: overrides.avatarEmoji ?? null,
+    })
+    .returning()
+
+  if (!profile) {
+    throw new Error("No se pudo crear el perfil de prueba.")
+  }
+
+  return profile
+}
+
 async function insertTestProfile(
   userId: string | null,
   managerId: string,

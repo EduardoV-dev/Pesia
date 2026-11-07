@@ -4,15 +4,13 @@ import { redirect } from "next/navigation"
 import { requireSession } from "@/auth/session"
 import { GoalSummary } from "@/features/goals/components/goal-summary"
 import { getActiveGoal } from "@/features/goals/server/get-active-goal"
-import { getActiveProfileId, pickActiveProfile } from "@/features/profiles/server/active-profile"
-import { getManagedProfiles } from "@/features/profiles/server/profile-access"
+import { resolveActiveProfile } from "@/features/profiles/server/active-profile"
 
 export const instant = false
 
 export default async function HomePage() {
   const session = await requireSession()
-  const managedProfiles = await getManagedProfiles(session.user.id)
-  const activeProfile = pickActiveProfile(managedProfiles, await getActiveProfileId())
+  const activeProfile = await resolveActiveProfile(session.user.id)
 
   if (!activeProfile) {
     redirect("/onboarding")
