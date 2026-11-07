@@ -51,7 +51,9 @@ export default function RootLayout({
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
       </head>
-      <body className="min-h-dvh antialiased">{children}</body>
+      <body className="min-h-dvh antialiased">
+        <div className="mx-auto flex min-h-dvh w-full max-w-app flex-col">{children}</div>
+      </body>
     </html>
   )
 }

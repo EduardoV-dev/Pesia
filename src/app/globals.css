@@ -18,6 +18,9 @@
 
   --radius: 1.5rem;
 
+  /* The content column of every screen never grows past this. */
+  --layout-max-width: 1200px;
+
   --background: var(--canvas-top);
   --foreground: var(--ink);
   --card: var(--surface);
@@ -55,6 +58,8 @@
 }
 
 @theme inline {
+  --container-app: var(--layout-max-width);
+
   --color-canvas: var(--canvas-top);
   --color-canvas-deep: var(--canvas-bottom);
   --color-surface: var(--surface);
