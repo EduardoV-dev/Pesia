@@ -9,6 +9,8 @@ import { getActiveGoal } from "@/features/goals/server/get-active-goal"
 import { ProfileEditorForm } from "@/features/profiles/components/profile-editor-form"
 import { getProfileForManager } from "@/features/profiles/server/profile-access"
 import { getGroupsForProfile } from "@/features/groups/server/group-access"
+import { TrendSection } from "@/features/stats/components/trend-section"
+import { composeTrend } from "@/features/stats/compose-trend"
 
 export const instant = false
 
@@ -77,6 +79,21 @@ export default async function ProfilePage({
             timezone,
             entries,
           }}
+        />
+      </div>
+
+      <div className="mt-5">
+        <TrendSection
+          profile={profile}
+          trend={composeTrend({
+            views: entries,
+            goal,
+            timeZone: timezone,
+            bmiEnabled: profile.bmiEnabled,
+            heightCm: profile.heightCm,
+          })}
+          goal={goal}
+          viewerUserId={session.user.id}
         />
       </div>
 

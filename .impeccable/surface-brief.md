@@ -74,3 +74,29 @@ review, the verdict, DESIGN.md, and every shipping raster carrying its provenanc
   world (deep warm brown ground, white cards, the same orange) rather than inverted
   mechanically.
 - Whether the group board reuses the member card shape or gets its own density.
+
+## Trend screen layout — accepted
+
+User-accepted on 2026-11-07 from `.impeccable/mocks/peach/trend-screen.html`
+(comp at that path). The accepted layout, in card order:
+
+1. Identity card: badge + name + unit chip; the big heavy numeral is the engine's
+   current weight (latest rolling mean), with the goal-relative direction pill and,
+   for goal members, the progress share pill.
+2. Trend card: "Tu tendencia · media de 7 días" with the sparkline — orange rolling
+   line over the dotted-grid field, readings as hollow dot markers behind it, gaps as
+   gaps — plus the Spanish caption naming the smoothing, the gap rule, the percentage
+   change with its baseline label and the screen-reader summary.
+3. Inline pair cards: goal progress ("Avance del objetivo", 0–100%) and the percentage
+   change ("Tu peso cambió …% desde el inicio de tu objetivo / desde tu primera
+   pesada"); for a maintain goal they become the band card and "Estás (dentro | a X de
+   tu banda)".
+4. States are content, not errors: without a target the trend, direction words and
+   percentage change stand alone with no progress bar; a dependent profile renders
+   trend + direction only; insufficient data says so plainly and shows the readings
+   that exist.
+5. BMI card only on the member's own surface: off by default with a height opt-in
+   form; on, the one-decimal IMC in the heavy numeral with the screening framing and
+   the "talk to your doctor" pointer, never labels, colour coding or thresholds.
+
+No verdict colors anywhere; the orange marks the data line and selection only.

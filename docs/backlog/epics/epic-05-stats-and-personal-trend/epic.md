@@ -61,20 +61,20 @@ A dependent profile is **trend-only**: weight history, direction, and stability.
 
 ## Acceptance criteria
 
-- [ ] **US-5.1** A member sees a smoothed trend line of their own weight.
-- [ ] **US-5.2** A member sees whether they are moving toward or away from their own goal.
-- [ ] **US-5.3** A member sees their percentage change since the baseline.
-- [ ] **US-5.4** A member sees progress toward their target, clamped to 0–100%.
-- [ ] **US-5.5** A member whose weight moves less than the deadband is told they are stable.
-- [ ] **US-5.6** A member with a maintain goal sees progress against the band.
-- [ ] **US-5.7** A member who changed their target sees the baseline reset and progress restart at 0%.
-- [ ] **US-5.8** A member can turn on BMI privately and can turn it off again.
-- [ ] **US-5.9** A member who has missed weeks sees a trend that does not fabricate a direction.
-- [ ] **US-5.10** A member with no target set sees a trend, a direction and a percentage change — not an empty progress bar.
-- [ ] A member with no target sees a useful view, not an error or a zeroed progress bar.
-- [ ] A dependent profile shows trend only — no target, no progress, no BMI.
-- [ ] No screen anywhere shows a raw delta between two readings (guardrail G2).
-- [ ] The deadband is covered by unit tests: a flat week reports `stable`, a sustained change reports a direction.
+- [x] **US-5.1** A member sees a smoothed trend line of their own weight.
+- [x] **US-5.2** A member sees whether they are moving toward or away from their own goal.
+- [x] **US-5.3** A member sees their percentage change since the baseline.
+- [x] **US-5.4** A member sees progress toward their target, clamped to 0–100%.
+- [x] **US-5.5** A member whose weight moves less than the deadband is told they are stable.
+- [x] **US-5.6** A member with a maintain goal sees progress against the band.
+- [x] **US-5.7** A member who changed their target sees the baseline reset and progress restart at 0%.
+- [x] **US-5.8** A member can turn on BMI privately and can turn it off again.
+- [x] **US-5.9** A member who has missed weeks sees a trend that does not fabricate a direction.
+- [x] **US-5.10** A member with no target set sees a trend, a direction and a percentage change — not an empty progress bar.
+- [x] A member with no target sees a useful view, not an error or a zeroed progress bar.
+- [x] A dependent profile shows trend only — no target, no progress, no BMI.
+- [x] No screen anywhere shows a raw delta between two readings (guardrail G2).
+- [x] The deadband is covered by unit tests: a flat week reports `stable`, a sustained change reports a direction.
 
 ## Dependencies
 
