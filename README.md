@@ -43,6 +43,14 @@ Fill in the values. `DATABASE_URL` points at the local container; the Google val
 from a Google Cloud OAuth client whose authorised redirect URI is
 `http://localhost:3015/api/auth/callback/google`.
 
+**The OAuth client needs its own Google Cloud project.** Google takes the app name shown
+on the sign-in and consent screens from the *project's* OAuth app branding, not from the
+client. A client that shares a project with another app therefore shows that app's name
+("Ir to Leonly" on the Google screen, for instance). To fix it, create a project for this
+app, set **Google Auth Platform → Branding → App Name** to `Weight Tracker`, publish the
+branding, and add a Web-application client with the redirect URI above. Renaming only the
+OAuth client is free and instant, but the consent screen keeps the project name.
+
 Generate the auth secret with:
 
 ```bash
