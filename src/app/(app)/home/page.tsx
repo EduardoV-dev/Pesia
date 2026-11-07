@@ -71,12 +71,18 @@ export default async function HomePage() {
 
       <div className="mt-5 rounded-card bg-surface p-6 shadow-[0_18px_44px_rgba(150,95,45,0.14)]">
         <h2 className="font-display text-lg leading-tight font-extrabold tracking-tight">
-          Tu familia todavía no tiene grupo
+          Tu familia
         </h2>
         <p className="mt-2 text-sm leading-relaxed text-ink-muted">
-          El siguiente paso es crear un grupo cerrado e invitar a las personas que querés pesar con
-          vos, o entrar en uno con el código que te pasaron.
+          Los grupos son cerrados: entra quien tiene una invitación y nada más. Creá uno para
+          invitar a las personas que pesás con vos, o entrá con el código que te pasaron.
         </p>
+        <Link
+          href="/groups"
+          className="mt-4 inline-block rounded-control bg-surface-muted px-5 py-3 font-display font-extrabold text-ink hover:opacity-80"
+        >
+          Ver mis grupos
+        </Link>
       </div>
     </main>
   )

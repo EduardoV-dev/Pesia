@@ -115,24 +115,24 @@ A per-member, per-group flag that removes the member from the board's ranking an
 
 ## Acceptance criteria
 
-- [ ] **US-3.1** A signed-in user can create a group and becomes its Owner.
-- [ ] **US-3.2** An invite link lets a new user join that group only.
-- [ ] **US-3.3** A 6-character code does the same.
-- [ ] **US-3.4** Joining via invite adds the user to the group and nothing else.
-- [ ] **US-3.5** An Owner can revoke an invite link, after which it no longer works.
-- [ ] **US-3.6** Only an Owner can promote or demote a Logger.
-- [ ] **US-3.7** A member can grant a specific person permission to log their weight.
-- [ ] **US-3.8** A member can revoke that permission at any time, effective immediately.
-- [ ] **US-3.9** A member can set their visibility level for a group.
-- [ ] **US-3.10** A member can opt out of the group's ranking.
-- [ ] **US-3.11** A member can set a personal weigh-in cadence.
-- [ ] **US-3.12** An Owner can set the group's weigh-in day and time.
-- [ ] **US-3.13** Removing a member closes the membership and keeps their past entries in the group's history.
-- [ ] **US-3.14** A member can leave a group under the same rule.
-- [ ] **US-3.15** An Owner can delete a group, destroying it and all its data.
-- [ ] **US-3.16** When the recorder leaves, the Owner is prompted to appoint a new one.
-- [ ] **US-3.17** Writing permission never grants reading permission.
-- [ ] A group is reachable only by invitation — there is no list, no search and no public URL.
+- [x] **US-3.1** A signed-in user can create a group and becomes its Owner.
+- [x] **US-3.2** An invite link lets a new user join that group only.
+- [x] **US-3.3** A 6-character code does the same.
+- [x] **US-3.4** Joining via invite adds the user to the group and nothing else.
+- [x] **US-3.5** An Owner can revoke an invite link, after which it no longer works.
+- [x] **US-3.6** Only an Owner can promote or demote a Logger.
+- [x] **US-3.7** A member can grant a specific person permission to log their weight.
+- [x] **US-3.8** A member can revoke that permission at any time, effective immediately.
+- [x] **US-3.9** A member can set their visibility level for a group.
+- [x] **US-3.10** A member can opt out of the group's ranking.
+- [x] **US-3.11** A member can set a personal weigh-in cadence.
+- [x] **US-3.12** An Owner can set the group's weigh-in day and time.
+- [x] **US-3.13** Removing a member closes the membership and keeps their past entries in the group's history.
+- [x] **US-3.14** A member can leave a group under the same rule.
+- [x] **US-3.15** An Owner can delete a group, destroying it and all its data.
+- [x] **US-3.16** When the recorder leaves, the Owner is prompted to appoint a new one.
+- [x] **US-3.17** Writing permission never grants reading permission.
+- [x] A group is reachable only by invitation — there is no list, no search and no public URL.
 
 ## Dependencies
 

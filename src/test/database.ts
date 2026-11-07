@@ -3,7 +3,10 @@ import { randomUUID } from "node:crypto"
 import { eq, inArray } from "drizzle-orm"
 
 import { db } from "@/db/client"
-import { profileManagers, profiles, session, user, type Profile } from "@/db/schema"
+import { groupMemberships, groups, profileManagers, profiles, session, user, type Profile } from "@/db/schema"
+import { type GroupRole } from "@/features/groups/roles"
+import { createGroup } from "@/features/groups/server/group-writes"
+import { rebuildRolePermissions } from "@/features/permissions/server/log-permissions"
 
 export type TestUser = {
   readonly id: string
@@ -110,6 +113,44 @@ async function insertTestProfile(
 
 export async function deleteTestProfile(profileId: string): Promise<void> {
   await db.delete(profiles).where(eq(profiles.id, profileId))
+}
+
+/** A group whose owner is the given profile, created through the real write path. */
+export async function createTestGroup(
+  testUser: TestUser,
+  ownerProfile: Profile,
+  name = "Familia de prueba",
+): Promise<string> {
+  const result = await createGroup(testUser.id, ownerProfile.id, { name })
+
+  if (!result.ok) {
+    throw new Error(result.errorMessage)
+  }
+
+  return result.groupId
+}
+
+/** Puts a profile in a group with a role and rebuilds the role permissions. */
+export async function addTestGroupMember(
+  groupId: string,
+  profileId: string,
+  role: GroupRole,
+): Promise<void> {
+  await db.transaction(async (transaction) => {
+    await transaction
+      .insert(groupMemberships)
+      .values({ groupId, profileId, role })
+      .onConflictDoUpdate({
+        target: [groupMemberships.groupId, groupMemberships.profileId],
+        set: { role, leftAt: null },
+      })
+
+    await rebuildRolePermissions(transaction, groupId, "test-user")
+  })
+}
+
+export async function deleteTestGroup(groupId: string): Promise<void> {
+  await db.delete(groups).where(eq(groups.id, groupId))
 }
 
 export async function deleteTestUser(testUser: TestUser): Promise<void> {

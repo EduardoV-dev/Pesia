@@ -21,3 +21,6 @@ if (process.env.NODE_ENV !== "production") {
 }
 
 export const db = drizzle(postgresClient, { schema })
+
+/** The transaction handle `db.transaction` hands to its callback. */
+export type DatabaseTransaction = Parameters<Parameters<typeof db.transaction>[0]>[0]

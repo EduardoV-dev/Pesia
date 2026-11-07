@@ -37,20 +37,38 @@ async function createAuthenticatedSession() {
   const sql = postgres(DATABASE_URL, { max: 1 })
   const userId = randomUUID()
   const token = randomUUID()
+  const profileId = randomUUID()
+  const groupId = randomUUID()
+  const inviteToken = randomUUID()
 
   await sql`INSERT INTO "user" (id, name, email, email_verified, created_at, updated_at)
     VALUES (${userId}, ${"Sesión de comprobación"}, ${`${userId}@example.test`}, true, now(), now())`
   await sql`INSERT INTO "session" (id, expires_at, token, created_at, updated_at, user_id)
     VALUES (${randomUUID()}, ${new Date(Date.now() + 3600000)}, ${token}, now(), now(), ${userId})`
+  await sql`INSERT INTO profiles (id, user_id, display_name, unit, avatar_emoji, is_dependent, created_at, updated_at)
+    VALUES (${profileId}, ${userId}, ${"Nina"}, ${"kg"}, ${"👩"}, false, now(), now())`
+  await sql`INSERT INTO profile_managers (profile_id, user_id, created_at)
+    VALUES (${profileId}, ${userId}, now())`
+  await sql`INSERT INTO groups (id, name, created_by_user_id, timezone, created_at)
+    VALUES (${groupId}, ${"Familia"}, ${userId}, ${"UTC"}, now())`
+  await sql`INSERT INTO group_memberships (id, group_id, profile_id, role, visibility, ranking_opt_out, joined_at, left_at)
+    VALUES (${randomUUID()}, ${groupId}, ${profileId}, ${"owner"}, ${"weight_trend"}, false, now(), null)`
+  await sql`INSERT INTO group_settings (group_id, weigh_in_weekday, weigh_in_time, reminders_enabled)
+    VALUES (${groupId}, ${0}, null, true)`
+  await sql`INSERT INTO can_log_for (group_id, subject_profile_id, logger_profile_id, granted_by_user_id, source)
+    VALUES (${groupId}, ${profileId}, ${profileId}, ${userId}, ${"role"})`
+  await sql`INSERT INTO invites (id, group_id, kind, token, created_at, revoked_at, expires_at)
+    VALUES (${randomUUID()}, ${groupId}, ${"code"}, ${inviteToken}, now(), null, null)`
 
   await sql.end()
 
-  return { userId, token }
+  return { userId, token, groupId, inviteToken }
 }
 
 async function removeAuthenticatedSession(userId) {
   const sql = postgres(DATABASE_URL, { max: 1 })
 
+  await sql`DELETE FROM groups WHERE created_by_user_id = ${userId}`
   await sql`DELETE FROM profiles WHERE user_id = ${userId}`
   await sql`DELETE FROM session WHERE user_id = ${userId}`
   await sql`DELETE FROM "user" WHERE id = ${userId}`
@@ -120,7 +138,7 @@ async function collectAccessibleName(page, element) {
   return imageAlt.trim()
 }
 
-const { userId, token } = await createAuthenticatedSession()
+const { userId, token, groupId, inviteToken } = await createAuthenticatedSession()
 const signedToken = await signCookieValue(token)
 
 const browser = await chromium.launch({
@@ -128,8 +146,15 @@ const browser = await chromium.launch({
   args: ["--no-sandbox"],
 })
 
+const routes = [
+  ...ROUTES,
+  { path: "/groups", requiresSession: true },
+  { path: `/groups/${groupId}`, requiresSession: true },
+  { path: `/invite/${inviteToken}`, requiresSession: true },
+]
+
 try {
-  for (const route of ROUTES) {
+  for (const route of routes) {
     const context = await browser.newContext({ viewport: NARROW_VIEWPORT })
     const page = await context.newPage()
 
@@ -245,5 +270,5 @@ if (failures.length > 0) {
 }
 
 console.log(
-  `Comprobaciones de interfaz correctas en ${ROUTES.map((route) => route.path).join(", ")} a ${NARROW_VIEWPORT.width}px.`,
+  `Comprobaciones de interfaz correctas en ${routes.map((route) => route.path).join(", ")} a ${NARROW_VIEWPORT.width}px.`,
 )

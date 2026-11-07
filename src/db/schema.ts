@@ -2,16 +2,22 @@ import { relations, sql } from "drizzle-orm"
 import {
   boolean,
   index,
+  integer,
   numeric,
   pgTable,
   primaryKey,
   text,
+  time,
   timestamp,
   uniqueIndex,
   uuid,
 } from "drizzle-orm/pg-core"
 
 import { type GoalDirection } from "@/features/goals/direction"
+import { type InviteKind } from "@/features/groups/invite"
+import { type GroupRole } from "@/features/groups/roles"
+import { type GroupVisibility } from "@/features/groups/visibility"
+import { type LogPermissionSource } from "@/features/permissions/log-permission-source"
 import { type WeightUnit } from "@/lib/weight-units"
 
 export const user = pgTable("user", {
@@ -141,6 +147,86 @@ export const goals = pgTable(
   ],
 )
 
+export const groups = pgTable("groups", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  name: text("name").notNull(),
+  // No foreign key: a group outlives the login that created it.
+  createdByUserId: text("created_by_user_id").notNull(),
+  timezone: text("timezone").notNull().default("UTC"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+})
+
+export const groupMemberships = pgTable(
+  "group_memberships",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    groupId: uuid("group_id")
+      .notNull()
+      .references(() => groups.id, { onDelete: "cascade" }),
+    profileId: uuid("profile_id")
+      .notNull()
+      .references(() => profiles.id, { onDelete: "cascade" }),
+    role: text("role").$type<GroupRole>().notNull().default("member"),
+    visibility: text("visibility").$type<GroupVisibility>().notNull().default("weight_trend"),
+    rankingOptOut: boolean("ranking_opt_out").default(false).notNull(),
+    cadenceDays: integer("cadence_days"),
+    joinedAt: timestamp("joined_at").defaultNow().notNull(),
+    leftAt: timestamp("left_at"),
+  },
+  (table) => [
+    uniqueIndex("group_memberships_group_profile_unique").on(table.groupId, table.profileId),
+    index("group_memberships_group_id_idx").on(table.groupId),
+    index("group_memberships_profile_id_idx").on(table.profileId),
+  ],
+)
+
+export const canLogFor = pgTable(
+  "can_log_for",
+  {
+    groupId: uuid("group_id")
+      .notNull()
+      .references(() => groups.id, { onDelete: "cascade" }),
+    subjectProfileId: uuid("subject_profile_id")
+      .notNull()
+      .references(() => profiles.id, { onDelete: "cascade" }),
+    loggerProfileId: uuid("logger_profile_id")
+      .notNull()
+      .references(() => profiles.id, { onDelete: "cascade" }),
+    grantedByUserId: text("granted_by_user_id").notNull(),
+    source: text("source").$type<LogPermissionSource>().notNull().default("role"),
+  },
+  (table) => [
+    primaryKey({ columns: [table.groupId, table.subjectProfileId, table.loggerProfileId] }),
+    index("can_log_for_group_id_idx").on(table.groupId),
+    index("can_log_for_logger_profile_id_idx").on(table.loggerProfileId),
+  ],
+)
+
+export const groupSettings = pgTable("group_settings", {
+  groupId: uuid("group_id")
+    .primaryKey()
+    .references(() => groups.id, { onDelete: "cascade" }),
+  weighInWeekday: integer("weigh_in_weekday").default(0).notNull(),
+  weighInTime: time("weigh_in_time"),
+  remindersEnabled: boolean("reminders_enabled").default(true).notNull(),
+})
+
+export const invites = pgTable(
+  "invites",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    groupId: uuid("group_id")
+      .notNull()
+      .references(() => groups.id, { onDelete: "cascade" }),
+    kind: text("kind").$type<InviteKind>().notNull(),
+    token: text("token").notNull().unique(),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+    revokedAt: timestamp("revoked_at"),
+    expiresAt: timestamp("expires_at"),
+  },
+  (table) => [index("invites_group_id_idx").on(table.groupId)],
+)
+
 export const userRelations = relations(user, ({ many }) => ({
   sessions: many(session),
   accounts: many(account),
@@ -171,7 +257,34 @@ export const goalsRelations = relations(goals, ({ one }) => ({
   profile: one(profiles, { fields: [goals.profileId], references: [profiles.id] }),
 }))
 
+export const groupsRelations = relations(groups, ({ many, one }) => ({
+  memberships: many(groupMemberships),
+  permissions: many(canLogFor),
+  settings: one(groupSettings),
+  invites: many(invites),
+}))
+
+export const groupMembershipsRelations = relations(groupMemberships, ({ one }) => ({
+  group: one(groups, { fields: [groupMemberships.groupId], references: [groups.id] }),
+  profile: one(profiles, { fields: [groupMemberships.profileId], references: [profiles.id] }),
+}))
+
+export const canLogForRelations = relations(canLogFor, ({ one }) => ({
+  group: one(groups, { fields: [canLogFor.groupId], references: [groups.id] }),
+  subject: one(profiles, { fields: [canLogFor.subjectProfileId], references: [profiles.id] }),
+  logger: one(profiles, { fields: [canLogFor.loggerProfileId], references: [profiles.id] }),
+}))
+
+export const invitesRelations = relations(invites, ({ one }) => ({
+  group: one(groups, { fields: [invites.groupId], references: [groups.id] }),
+}))
+
 export type User = typeof user.$inferSelect
 export type Session = typeof session.$inferSelect
 export type Profile = typeof profiles.$inferSelect
 export type Goal = typeof goals.$inferSelect
+export type Group = typeof groups.$inferSelect
+export type GroupMembership = typeof groupMemberships.$inferSelect
+export type CanLogFor = typeof canLogFor.$inferSelect
+export type GroupSetting = typeof groupSettings.$inferSelect
+export type Invite = typeof invites.$inferSelect
