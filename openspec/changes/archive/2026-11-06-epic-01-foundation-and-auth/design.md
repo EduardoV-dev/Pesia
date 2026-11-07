@@ -146,7 +146,7 @@ as a different product.
 
 - **Google's OAuth callback is HTTPS-only in production** → the deployed domain and its
   registered callback are required for US-1.8; local development uses the
-  `http://localhost:3010` callback that Google allows. No fake local OAuth path is
+  `http://localhost:3015` callback that Google allows. No fake local OAuth path is
   added.
 - **Better Auth's Drizzle adapter import path changed between releases** → the path is
   verified against the installed version's export map before wiring, and pinned in
