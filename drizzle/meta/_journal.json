@@ -50,6 +50,20 @@
       "when": 1794162438345,
       "tag": "0006_smiling_scarlet_witch",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1794167905177,
+      "tag": "0007_amused_infant_terrible",
+      "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1794168411931,
+      "tag": "0008_wet_arclight",
+      "breakpoints": true
     }
   ]
 }

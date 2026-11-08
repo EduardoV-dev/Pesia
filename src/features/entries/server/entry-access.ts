@@ -1,6 +1,6 @@
 import "server-only"
 
-import { and, desc, eq, isNull, sql } from "drizzle-orm"
+import { and, desc, eq, isNull, max, sql } from "drizzle-orm"
 import { alias } from "drizzle-orm/pg-core"
 
 import { db } from "@/db/client"
@@ -12,6 +12,7 @@ import {
   user,
   type Entry,
 } from "@/db/schema"
+import { groupDayKey } from "@/features/entries/entry-format"
 import { resolveVisibilityGrant, type GroupVisibility } from "@/features/groups/visibility"
 
 import { type EntryView } from "../entry-view"
@@ -179,6 +180,32 @@ function assembleView(
     note: isNoteAuthor ? entry.note : null,
     canEdit,
   }
+}
+
+/** The group's newest measured day per member, deleted rows excluded: the scan
+ * consumes it for the shared due rule without serving any payload to a client. */
+/** The group's newest measured day per member, deleted rows excluded: the scan
+ * consumes it for the shared due rule without serving any payload to a client. */
+export async function lastMeasuredDayKeyByProfile(
+  groupId: string,
+  timeZone: string,
+): Promise<Map<string, string>> {
+  const rows = await db
+    .select({
+      profileId: entries.profileId,
+      lastMeasuredAt: max(entries.measuredAt),
+    })
+    .from(entries)
+    .where(and(eq(entries.groupId, groupId), isNull(entries.deletedAt)))
+    .groupBy(entries.profileId)
+
+  return new Map(
+    rows.flatMap((row) =>
+      row.lastMeasuredAt === null
+        ? []
+        : [[row.profileId, groupDayKey(row.lastMeasuredAt, timeZone)]],
+    ),
+  )
 }
 
 async function listSubjectManagerUserIds(subjectProfileId: string): Promise<string[]> {

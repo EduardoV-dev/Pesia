@@ -1,0 +1,1 @@
+ALTER TABLE "group_settings" ADD COLUMN "last_reminder_scan_day" date;

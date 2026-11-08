@@ -6,10 +6,8 @@ import type { BoardMemberCard } from "@/features/board/board-payload"
 import { groupDayKey } from "@/features/entries/entry-format"
 import { type EntryView } from "@/features/entries/entry-view"
 import { composeTrend, type TrendDirection } from "@/features/stats/compose-trend"
+import { isDueByCadence } from "@/features/reminders/due-rule"
 import { type CardSource, type MemberDetail, type MemberView } from "./board-source"
-
-const WEEKLY_FALLBACK_CADENCE_DAYS = 7
-const MS_PER_DAY = 86_400_000
 
 /**
  * One card per member, ordered by the consistency strip first and the family
@@ -188,30 +186,22 @@ function chipTypesOf(member: MemberView, claims: readonly AwardClaim[]): AwardCl
 
 /**
  * A member's turn is due when their last weigh-in is as old as their own
- * cadence (their joined day anchors members without entries). Dependents are
- * excluded by construction: their "turn" is whoever records for them, never a
- * self-check they can miss (G7).
+ * cadence (their joined day anchors members without entries) — the one shared
+ * rule. Dependents are excluded by construction: their "turn" is whoever
+ * records for them, never a self-check they can miss (G7).
  */
 function isDue(member: MemberView, details: MemberDetail, source: CardSource): boolean {
   if (member.isDependent) {
     return false
   }
 
-  const cadenceDays =
-    member.cadenceDays ?? (source.groupWeekday === null ? null : WEEKLY_FALLBACK_CADENCE_DAYS)
-
-  if (cadenceDays === null) {
-    return false
-  }
-
-  const anchorDayKey = details.lastMeasuredDayKey ?? groupDayKey(member.joinedAt, source.timeZone)
-  const daysSinceAnchor = dayNumber(source.todayKey) - dayNumber(anchorDayKey)
-
-  return daysSinceAnchor >= cadenceDays
-}
-
-function dayNumber(dayKey: string): number {
-  return Math.floor(Date.parse(`${dayKey}T00:00:00Z`) / MS_PER_DAY)
+  return isDueByCadence({
+    cadenceDays: member.cadenceDays,
+    weighInWeekday: source.groupWeekday,
+    joinedDayKey: groupDayKey(member.joinedAt, source.timeZone),
+    lastMeasuredDayKey: details.lastMeasuredDayKey,
+    todayKey: source.todayKey,
+  })
 }
 
 type EntryViewLike = { readonly weightKg: number | null }

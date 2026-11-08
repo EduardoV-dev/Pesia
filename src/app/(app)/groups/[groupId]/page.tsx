@@ -15,6 +15,8 @@ import { buildInviteUrl, listActiveInvites } from "@/features/groups/server/invi
 import { WEEKDAY_LABELS } from "@/features/groups/weigh-in"
 import { listLogPermissionHolders } from "@/features/permissions/server/log-permission-writes"
 import { resolveVisibleMembers } from "@/features/permissions/server/visibility"
+import { ReminderOptInSection } from "@/features/push/components/reminder-opt-in"
+import { getReminderOptIn } from "@/features/push/server/opt-in-writes"
 
 export const instant = false
 
@@ -23,7 +25,7 @@ export default async function GroupPage({
 }: Readonly<{
   params: Promise<{ groupId: string }>
 }>) {
-  const { profileId } = await requireActingProfile()
+  const { userId, profileId } = await requireActingProfile()
   const { groupId } = await params
 
   const membership = await getMembership(groupId, profileId)
@@ -37,6 +39,9 @@ export default async function GroupPage({
   if (!group) {
     redirect("/groups")
   }
+
+  // Reminder consent is user-level; the toggle reads and writes that truth.
+  const reminderOptIn = await getReminderOptIn(userId, groupId)
 
   const members = await resolveVisibleMembers({ groupId, viewerProfileId: profileId })
   const settings = await getGroupSettings(groupId)
@@ -116,6 +121,24 @@ export default async function GroupPage({
           rankingOptOut={membership.rankingOptOut}
           cadenceKey={getCadenceKey(membership.cadenceDays)}
           isDependent={actingMember?.isDependent ?? false}
+        />
+      </div>
+
+      <div className="mt-5 rounded-card bg-surface p-6 shadow-[0_18px_44px_rgba(150,95,45,0.14)]">
+        <p className="font-display text-xs font-extrabold tracking-[0.2em] text-accent-strong uppercase">
+          Avisos
+        </p>
+        <h2 className="font-display mt-3 text-lg leading-tight font-extrabold tracking-tight">
+          Recordatorios del grupo
+        </h2>
+        <p className="mt-2 mb-6 text-sm leading-relaxed text-ink-muted">
+          Te dejamos elegir si querés que te avise. El aviso nombra de quién es el turno y nada más.
+        </p>
+
+        <ReminderOptInSection
+          groupId={groupId}
+          initialEnabled={reminderOptIn}
+          vapidPublicKey={process.env.VAPID_PUBLIC_KEY ?? null}
         />
       </div>
 

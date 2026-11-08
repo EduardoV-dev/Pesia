@@ -214,6 +214,8 @@ export const groupSettings = pgTable("group_settings", {
   weighInWeekday: integer("weigh_in_weekday").default(0).notNull(),
   weighInTime: time("weigh_in_time"),
   remindersEnabled: boolean("reminders_enabled").default(true).notNull(),
+  // The group's last reminder-scan day key: the cross-run per-day dedup (G7).
+  lastReminderScanDay: date("last_reminder_scan_day", { mode: "string" }),
 })
 
 export const entries = pgTable(
@@ -291,6 +293,44 @@ export const awardClaims = pgTable(
   ],
 )
 
+export const pushOptIns = pgTable(
+  "push_opt_ins",
+  {
+    // No user foreign key: consent rows outlive the login, like recorded_by_user_id.
+    id: uuid("id").primaryKey().defaultRandom(),
+    userId: text("user_id").notNull(),
+    groupId: uuid("group_id")
+      .notNull()
+      .references(() => groups.id, { onDelete: "cascade" }),
+    enabled: boolean("enabled").default(false).notNull(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
+  },
+  (table) => [
+    uniqueIndex("push_opt_ins_user_group_unique").on(table.userId, table.groupId),
+    index("push_opt_ins_group_id_idx").on(table.groupId),
+  ],
+)
+
+export const pushSubscriptions = pgTable(
+  "push_subscriptions",
+  {
+    // No user foreign key: attribution outlives the login like recorded_by_user_id.
+    id: uuid("id").primaryKey().defaultRandom(),
+    userId: text("user_id").notNull(),
+    groupId: uuid("group_id")
+      .notNull()
+      .references(() => groups.id, { onDelete: "cascade" }),
+    endpoint: text("endpoint").notNull().unique(),
+    p256dh: text("p256dh").notNull(),
+    auth: text("auth").notNull(),
+    createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+  },
+  (table) => [
+    index("push_subscriptions_user_id_idx").on(table.userId),
+    index("push_subscriptions_group_id_idx").on(table.groupId),
+  ],
+)
+
 export const userRelations = relations(user, ({ many }) => ({
   sessions: many(session),
   accounts: many(account),
@@ -356,6 +396,14 @@ export const awardClaimsRelations = relations(awardClaims, ({ one }) => ({
   profile: one(profiles, { fields: [awardClaims.profileId], references: [profiles.id] }),
 }))
 
+export const pushOptInsRelations = relations(pushOptIns, ({ one }) => ({
+  group: one(groups, { fields: [pushOptIns.groupId], references: [groups.id] }),
+}))
+
+export const pushSubscriptionsRelations = relations(pushSubscriptions, ({ one }) => ({
+  group: one(groups, { fields: [pushSubscriptions.groupId], references: [groups.id] }),
+}))
+
 export type User = typeof user.$inferSelect
 export type Session = typeof session.$inferSelect
 export type Profile = typeof profiles.$inferSelect
@@ -367,3 +415,5 @@ export type Entry = typeof entries.$inferSelect
 export type GroupSetting = typeof groupSettings.$inferSelect
 export type Invite = typeof invites.$inferSelect
 export type AwardClaim = typeof awardClaims.$inferSelect
+export type PushOptIn = typeof pushOptIns.$inferSelect
+export type PushSubscription = typeof pushSubscriptions.$inferSelect

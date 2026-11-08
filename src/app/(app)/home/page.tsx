@@ -13,6 +13,7 @@ import {
   listGroupMembers,
 } from "@/features/groups/server/group-access"
 import { listLoggableSubjectIds } from "@/features/permissions/server/log-permissions"
+import { InstallApp } from "@/features/pwa/components/install-app"
 
 export const instant = false
 
@@ -86,6 +87,10 @@ export default async function HomePage() {
           </Link>
         </div>
       )}
+
+      <div className="mt-5">
+        <InstallApp />
+      </div>
 
       <div className="mt-5 rounded-card bg-surface p-6 shadow-[0_18px_44px_rgba(150,95,45,0.14)]">
         <p className="font-display text-xs font-extrabold tracking-[0.2em] text-accent-strong uppercase">
