@@ -1,6 +1,7 @@
 import { relations, sql } from "drizzle-orm"
 import {
   boolean,
+  date,
   index,
   integer,
   numeric,
@@ -14,6 +15,7 @@ import {
 } from "drizzle-orm/pg-core"
 
 import { type GoalDirection } from "@/features/goals/direction"
+import { type AwardClaimType } from "@/features/awards/award-type"
 import { type InviteKind } from "@/features/groups/invite"
 import { type GroupRole } from "@/features/groups/roles"
 import { type GroupVisibility } from "@/features/groups/visibility"
@@ -261,6 +263,34 @@ export const invites = pgTable(
   (table) => [index("invites_group_id_idx").on(table.groupId)],
 )
 
+export const awardClaims = pgTable(
+  "award_claims",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    groupId: uuid("group_id")
+      .notNull()
+      .references(() => groups.id, { onDelete: "cascade" }),
+    profileId: uuid("profile_id")
+      .notNull()
+      .references(() => profiles.id, { onDelete: "cascade" }),
+    awardType: text("award_type").$type<AwardClaimType>().notNull(),
+    periodStart: date("period_start", { mode: "string" }).notNull(),
+    periodEnd: date("period_end", { mode: "string" }).notNull(),
+    computedAt: timestamp("computed_at", { withTimezone: true }).defaultNow().notNull(),
+    // The whole disclosure mechanism: published only when the member opts in.
+    sharedPublic: boolean("shared_public").default(false).notNull(),
+  },
+  (table) => [
+    uniqueIndex("award_claims_group_profile_type_period_unique").on(
+      table.groupId,
+      table.profileId,
+      table.awardType,
+      table.periodStart,
+    ),
+    index("award_claims_group_id_period_idx").on(table.groupId, table.periodStart),
+  ],
+)
+
 export const userRelations = relations(user, ({ many }) => ({
   sessions: many(session),
   accounts: many(account),
@@ -298,6 +328,7 @@ export const groupsRelations = relations(groups, ({ many, one }) => ({
   settings: one(groupSettings),
   invites: many(invites),
   entries: many(entries),
+  awardClaims: many(awardClaims),
 }))
 
 export const groupMembershipsRelations = relations(groupMemberships, ({ one }) => ({
@@ -320,6 +351,11 @@ export const invitesRelations = relations(invites, ({ one }) => ({
   group: one(groups, { fields: [invites.groupId], references: [groups.id] }),
 }))
 
+export const awardClaimsRelations = relations(awardClaims, ({ one }) => ({
+  group: one(groups, { fields: [awardClaims.groupId], references: [groups.id] }),
+  profile: one(profiles, { fields: [awardClaims.profileId], references: [profiles.id] }),
+}))
+
 export type User = typeof user.$inferSelect
 export type Session = typeof session.$inferSelect
 export type Profile = typeof profiles.$inferSelect
@@ -330,3 +366,4 @@ export type CanLogFor = typeof canLogFor.$inferSelect
 export type Entry = typeof entries.$inferSelect
 export type GroupSetting = typeof groupSettings.$inferSelect
 export type Invite = typeof invites.$inferSelect
+export type AwardClaim = typeof awardClaims.$inferSelect

@@ -1,3 +1,4 @@
+import Link from "next/link"
 import { redirect } from "next/navigation"
 
 import { GroupDangerZone } from "@/features/groups/components/group-danger-zone"
@@ -58,6 +59,12 @@ export default async function GroupPage({
           {GROUP_ROLE_LABELS[membership.role]}
           {settings ? ` · pesaje los ${WEEKDAY_LABELS[settings.weighInWeekday].toLowerCase()}` : ""}
         </p>
+        <Link
+          href={`/groups/${groupId}/board`}
+          className="mt-5 inline-block rounded-control bg-accent px-5 py-3 font-display font-extrabold text-accent-ink shadow-[0_10px_22px_rgba(234,88,12,0.28)] hover:opacity-90"
+        >
+          Ver el tablero
+        </Link>
       </div>
 
       {!hasRecorder ? (

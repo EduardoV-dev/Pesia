@@ -90,20 +90,20 @@ A member whose check-in is due appears on the sheet as due. A member who has set
 
 ## Acceptance criteria
 
-- [ ] **US-6.1** I can open the group board and see every member's own progress.
-- [ ] **US-6.2** I see only what each member chose to share.
-- [ ] **US-6.3** A private member appears as "private" and nothing more.
-- [ ] **US-6.4** A member who opted out is absent from the ranking strip but still on the sheet.
-- [ ] **US-6.5** Consistency awards are shown on the card they belong to.
-- [ ] **US-6.6** I learn privately that I changed the most in the period.
-- [ ] **US-6.7** I can choose whether to publish that badge.
-- [ ] **US-6.8** A dependent's card shows a trend and no score.
-- [ ] **US-6.9** A hidden member is never shown as missing or due.
-- [ ] **US-6.10** The board shows progress bars side by side, never a ranked list.
-- [ ] **US-6.11** Every board read is filtered on the server before the response is sent.
-- [ ] Every read path applies the filter server-side, with integration tests covering every viewer role × visibility × dependent flag × opt-out combination.
-- [ ] Notes never leave the server for any viewer other than their author.
-- [ ] No screen in the product renders a body-size ranking.
+- [x] **US-6.1** I can open the group board and see every member's own progress.
+- [x] **US-6.2** I see only what each member chose to share.
+- [x] **US-6.3** A private member appears as "private" and nothing more.
+- [x] **US-6.4** A member who opted out is absent from the ranking strip but still on the sheet.
+- [x] **US-6.5** Consistency awards are shown on the card they belong to.
+- [x] **US-6.6** I learn privately that I changed the most in the period.
+- [x] **US-6.7** I can choose whether to publish that badge.
+- [x] **US-6.8** A dependent's card shows a trend and no score.
+- [x] **US-6.9** A hidden member is never shown as missing or due.
+- [x] **US-6.10** The board shows progress bars side by side, never a ranked list.
+- [x] **US-6.11** Every board read is filtered on the server before the response is sent.
+- [x] Every read path applies the filter server-side, with integration tests covering every viewer role × visibility × dependent flag × opt-out combination.
+- [x] Notes never leave the server for any viewer other than their author.
+- [x] No screen in the product renders a body-size ranking.
 
 ## Dependencies
 

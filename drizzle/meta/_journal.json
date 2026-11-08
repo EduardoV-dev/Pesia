@@ -43,6 +43,13 @@
       "when": 1794087613487,
       "tag": "0005_glorious_dragon_lord",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1794162438345,
+      "tag": "0006_smiling_scarlet_witch",
+      "breakpoints": true
     }
   ]
 }

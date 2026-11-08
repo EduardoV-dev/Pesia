@@ -6,6 +6,7 @@ import { db } from "@/db/client"
 import { groupMemberships, profiles } from "@/db/schema"
 import { type GroupRole } from "@/features/groups/roles"
 import { resolveVisibilityGrant, type GroupVisibility } from "@/features/groups/visibility"
+import { type WeightUnit } from "@/lib/weight-units"
 
 export const PRIVATE_MEMBER_LABEL = "Privado"
 
@@ -19,6 +20,10 @@ export type GroupMemberView = {
   readonly canViewWeight: boolean
   readonly canViewTrend: boolean
   readonly rankingOptOut: boolean
+  /** The member's own cadence in days; `null` when they did not set one. */
+  readonly cadenceDays: number | null
+  readonly unit: WeightUnit
+  readonly joinedAt: Date
 }
 
 export type ResolveVisibleMembersParams = {
@@ -50,6 +55,9 @@ export async function resolveVisibleMembers({
       role: row.membership.role,
       visibility: row.membership.visibility,
       rankingOptOut: row.membership.rankingOptOut,
+      cadenceDays: row.membership.cadenceDays,
+      unit: row.profile.unit,
+      joinedAt: row.membership.joinedAt,
       isDependent: row.profile.isDependent,
       isSelf: row.profile.id === viewerProfileId,
     }),
@@ -63,6 +71,9 @@ type ResolveMemberViewParams = {
   readonly role: GroupRole
   readonly visibility: GroupVisibility
   readonly rankingOptOut: boolean
+  readonly cadenceDays: number | null
+  readonly unit: WeightUnit
+  readonly joinedAt: Date
   readonly isDependent: boolean
   readonly isSelf: boolean
 }
@@ -74,6 +85,9 @@ function resolveMemberView({
   role,
   visibility,
   rankingOptOut,
+  cadenceDays,
+  unit,
+  joinedAt,
   isDependent,
   isSelf,
 }: ResolveMemberViewParams): GroupMemberView {
@@ -88,6 +102,9 @@ function resolveMemberView({
       canViewWeight: true,
       canViewTrend: true,
       rankingOptOut,
+      cadenceDays,
+      unit,
+      joinedAt,
     }
   }
 
@@ -104,6 +121,9 @@ function resolveMemberView({
       canViewWeight: false,
       canViewTrend: false,
       rankingOptOut: false,
+      cadenceDays,
+      unit,
+      joinedAt,
     }
   }
 
@@ -118,5 +138,8 @@ function resolveMemberView({
     canViewTrend: grant.showsTrend,
     // A dependent is never ranked, so there is nothing to opt out of.
     rankingOptOut: isDependent ? false : rankingOptOut,
+    cadenceDays,
+    unit,
+    joinedAt,
   }
 }
