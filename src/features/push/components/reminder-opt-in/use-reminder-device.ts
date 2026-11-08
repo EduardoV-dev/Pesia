@@ -1,6 +1,6 @@
 "use client"
 
-import { useCallback, useState } from "react"
+import { type Dispatch, type SetStateAction, useCallback, useRef, useState } from "react"
 
 import { type FormState } from "@/lib/form-state"
 
@@ -11,6 +11,8 @@ export type ReminderDeviceState =
   | { readonly kind: "pending" }
   | { readonly kind: "denied"; readonly message: string }
   | { readonly kind: "notice"; readonly message: string }
+
+type SetReminderState = Dispatch<SetStateAction<ReminderDeviceState>>
 
 type UseReminderDeviceReturn = {
   readonly state: ReminderDeviceState
@@ -36,102 +38,133 @@ const SUBSCRIBE_PATH = "/api/push/subscriptions"
 /**
  * The device-side reminder opt-in: the permission prompt runs inside the
  * toggle's own click gesture, the push subscription registers before the
- * consent persists, and a denied permission never stores anything (G7).
- * A browser without a notification API keeps the consent: the email fallback
- * carries those reminders.
+ * consent persists, and a denied permission never stores anything (G7). A
+ * browser without a notification API keeps the consent: the email fallback
+ * carries those reminders. One flow at a time — a doubled gesture must not
+ * register two endpoints and orphan the first behind a dead FCM registration.
  */
 export function useReminderDevice(vapidPublicKey: string | null): UseReminderDeviceReturn {
   const [state, setState] = useState<ReminderDeviceState>({ kind: "idle" })
+  const inFlightRef = useRef(false)
 
   const enable = useCallback(
     async (groupId: string): Promise<boolean> => {
-      if (typeof window === "undefined") {
-        return false
+      if (typeof window === "undefined" || inFlightRef.current) {
+        return true
       }
 
-      setState({ kind: "pending" })
+      inFlightRef.current = true
 
-      if (!("Notification" in window)) {
-        setState({ kind: "notice", message: NOTIFICATIONS_UNAVAILABLE_MESSAGE })
-        return persistConsent(groupId, true)
+      try {
+        return await enableReminderDevice(groupId, vapidPublicKey, setState)
+      } finally {
+        inFlightRef.current = false
       }
-
-      const permission = Notification.permission
-
-      if (permission === "denied") {
-        setState({ kind: "denied", message: PERMISSION_DENIED_MESSAGE })
-
-        return false
-      }
-
-      if (permission === "default") {
-        const granted = (await Notification.requestPermission()) === "granted"
-
-        if (!granted) {
-          setState({ kind: "denied", message: PERMISSION_DENIED_MESSAGE })
-
-          return false
-        }
-      }
-
-      let subscriptionEndpoint: string | null = null
-
-      if (hasPushService() && vapidPublicKey) {
-        const subscribed = await subscribeDevice(vapidPublicKey)
-
-        if (subscribed === null) {
-          setState({ kind: "denied", message: SUBSCRIPTION_FAILED_MESSAGE })
-
-          return false
-        }
-
-        const stored = await storeSubscription(groupId, subscribed)
-
-        if (!stored) {
-          setState({ kind: "denied", message: SUBSCRIPTION_FAILED_MESSAGE })
-
-          return false
-        }
-
-        subscriptionEndpoint = subscribed.endpoint
-      }
-
-      const persisted = await persistConsent(groupId, true)
-
-      if (!persisted && subscriptionEndpoint) {
-        await dropStoredSubscription(subscriptionEndpoint)
-
-        setState({ kind: "denied", message: SUBSCRIPTION_FAILED_MESSAGE })
-
-        return false
-      }
-
-      setState({ kind: "idle" })
-
-      return persisted
     },
     [vapidPublicKey],
   )
 
   const disable = useCallback(async (groupId: string): Promise<void> => {
-    await persistConsent(groupId, false)
-
-    if (hasPushService()) {
-      const registration = await navigator.serviceWorker.getRegistration()
-
-      if (registration) {
-        const subscription = await registration.pushManager.getSubscription()
-
-        if (subscription) {
-          await dropStoredSubscription(subscription.endpoint)
-        }
-      }
+    if (inFlightRef.current) {
+      return
     }
 
-    setState({ kind: "idle" })
+    inFlightRef.current = true
+
+    try {
+      await disableReminderDevice(groupId, setState)
+    } finally {
+      inFlightRef.current = false
+    }
   }, [])
 
   return { state, enable, disable }
+}
+
+async function enableReminderDevice(
+  groupId: string,
+  vapidPublicKey: string | null,
+  setState: SetReminderState,
+): Promise<boolean> {
+  setState({ kind: "pending" })
+
+  if (!("Notification" in window)) {
+    setState({ kind: "notice", message: NOTIFICATIONS_UNAVAILABLE_MESSAGE })
+
+    return persistConsent(groupId, true)
+  }
+
+  const permission = Notification.permission
+
+  if (permission === "denied") {
+    setState({ kind: "denied", message: PERMISSION_DENIED_MESSAGE })
+
+    return false
+  }
+
+  if (permission === "default") {
+    const granted = (await Notification.requestPermission()) === "granted"
+
+    if (!granted) {
+      setState({ kind: "denied", message: PERMISSION_DENIED_MESSAGE })
+
+      return false
+    }
+  }
+
+  let subscriptionEndpoint: string | null = null
+
+  if (hasPushService() && vapidPublicKey) {
+    const subscribed = await subscribeDevice(vapidPublicKey)
+
+    if (subscribed === null) {
+      setState({ kind: "denied", message: SUBSCRIPTION_FAILED_MESSAGE })
+
+      return false
+    }
+
+    const stored = await storeSubscription(groupId, subscribed)
+
+    if (!stored) {
+      setState({ kind: "denied", message: SUBSCRIPTION_FAILED_MESSAGE })
+
+      return false
+    }
+
+    subscriptionEndpoint = subscribed.endpoint
+  }
+
+  const persisted = await persistConsent(groupId, true)
+
+  if (!persisted && subscriptionEndpoint) {
+    await dropStoredSubscription(subscriptionEndpoint)
+
+    setState({ kind: "denied", message: SUBSCRIPTION_FAILED_MESSAGE })
+
+    return false
+  }
+
+  setState({ kind: "idle" })
+
+  return persisted
+}
+
+async function disableReminderDevice(groupId: string, setState: SetReminderState): Promise<void> {
+  await persistConsent(groupId, false)
+
+  if (hasPushService()) {
+    const registration = await navigator.serviceWorker.getRegistration()
+
+    if (registration) {
+      const subscription = await registration.pushManager.getSubscription()
+
+      if (subscription) {
+        await dropStoredSubscription(subscription.endpoint)
+      }
+    }
+  }
+
+  setState({ kind: "idle" })
 }
 
 async function persistConsent(groupId: string, enabled: boolean): Promise<boolean> {
@@ -159,10 +192,15 @@ async function subscribeDevice(vapidPublicKey: string): Promise<PushSubscription
   }
 
   try {
-    const subscription = await registration.pushManager.subscribe({
-      userVisibleOnly: true,
-      applicationServerKey,
-    })
+    // An existing subscription for this origin is reused: a second opt-in must
+    // not orphan the previous endpoint row behind a fresh FCM registration.
+    const existing = await registration.pushManager.getSubscription()
+    const subscription =
+      existing ??
+      (await registration.pushManager.subscribe({
+        userVisibleOnly: true,
+        applicationServerKey,
+      }))
 
     const keys = {
       p256dh: arrayBufferToBase64(subscription.getKey("p256dh")),

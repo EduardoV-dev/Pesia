@@ -83,7 +83,7 @@ touched; G2/G3 honored by the copy bound.
 ## 7. Epic close-out
 
 - [x] 7.1 `pnpm run lint`, `pnpm run typecheck`, `pnpm run test` all green.
-- [ ] 7.2 Manual desktop pass: install affordance appears, opt-in keeps after
+- [x] 7.2 Manual desktop pass: install affordance appears, opt-in keeps after
       reload, offline shell unchanged, notification shows Spanish copy with no
       weight on a locally triggered scan.
 - [x] 7.3 Tick the epic's acceptance list and update

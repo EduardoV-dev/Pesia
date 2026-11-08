@@ -59,6 +59,11 @@ export async function sendReminderPush(
       return "gone"
     }
 
+    console.error(
+      `push send failed for ${subscription.endpoint.split("/").pop() ?? "endpoint"}:`,
+      error instanceof Error ? error.message : String(error),
+    )
+
     return "failed"
   }
 
