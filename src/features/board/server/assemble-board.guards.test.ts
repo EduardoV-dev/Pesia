@@ -288,6 +288,45 @@ describe("assembleGroupBoard payload shape (G1/US-6.10)", () => {
   })
 })
 
+describe("board payload privacy keys (G4/G9 — epic 8 audit)", () => {
+  it("no card carries BMI for a member who opted in, and a dependent card carries no target, progress or rank", async () => {
+    const fixture = await createStaleFixture(false)
+
+    // The dependent's BMI is on and their height stored: even so, no board
+    // response may carry BMI for them or for anyone (G4).
+    await db
+      .update(profiles)
+      .set({ bmiEnabled: true, heightCm: 120 })
+      .where(eq(profiles.id, fixture.subjects.dependent))
+    await db
+      .update(profiles)
+      .set({ bmiEnabled: true, heightCm: 170 })
+      .where(eq(profiles.id, fixture.subjects.named))
+
+    const payload = await assembleGroupBoard({
+      groupId: fixture.groupId,
+      viewerProfileId: fixture.owner.profileId,
+      viewerUserId: fixture.owner.userId,
+    })
+
+    expect(payload).not.toBeNull()
+    const serialized = JSON.stringify(payload)
+    const forbiddenKeys = ["bmi", "bmiValue", "heightCm", "target", "targetWeightKg", "progressPercentage"]
+
+    for (const forbiddenKey of forbiddenKeys) {
+      expect(serialized).not.toContain(`"${forbiddenKey}"`)
+    }
+
+    const dependentCard = cardsOf(payload).get(fixture.subjects.dependent)
+
+    expect(dependentCard?.kind).toBe("dependent")
+
+    for (const forbiddenKey of ["progress", "sparkline", "awardTypes", "isDue", "rankingOptOut"]) {
+      expect(Object.keys(dependentCard ?? {})).not.toContain(forbiddenKey)
+    }
+  })
+})
+
 describe("board modules architecture (task 2.7)", () => {  const boardRoot = fileURLToPath(new URL("..", import.meta.url))
 
   const listFiles = (directory: string): string[] =>

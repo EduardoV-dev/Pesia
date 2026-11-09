@@ -119,9 +119,12 @@ export async function createEntry(params: CreateEntryParams): Promise<EntryWrite
     return failure("logger_not_in_group", "No sos parte de este grupo.")
   }
 
-  const subjectIsMember = await getMembership(params.groupId, params.subjectProfileId)
+  const subjectIsRecordable = await assertSubjectRecordable(
+    params.groupId,
+    params.subjectProfileId,
+  )
 
-  if (!subjectIsMember) {
+  if (!subjectIsRecordable) {
     return failure("subject_not_in_group", "Esa persona no está en este grupo.")
   }
 
@@ -313,6 +316,30 @@ async function getProfileName(profileId: string): Promise<string> {
     .limit(1)
 
   return profile?.displayName ?? ""
+}
+
+/**
+ * A subject is recordable only while they are an active member and their profile
+ * has not been soft-removed by a guardian. Editing existing entries is unaffected:
+ * removal stops future recording, it does not rewrite the past.
+ */
+async function assertSubjectRecordable(
+  groupId: string,
+  subjectProfileId: string,
+): Promise<boolean> {
+  const subjectIsMember = await getMembership(groupId, subjectProfileId)
+
+  if (!subjectIsMember) {
+    return false
+  }
+
+  const [subject] = await db
+    .select({ removedAt: profiles.removedAt })
+    .from(profiles)
+    .where(eq(profiles.id, subjectProfileId))
+    .limit(1)
+
+  return subject !== undefined && subject.removedAt === null
 }
 
 function failure(code: EntryWriteCode, errorMessage: string): EntryWriteResult {

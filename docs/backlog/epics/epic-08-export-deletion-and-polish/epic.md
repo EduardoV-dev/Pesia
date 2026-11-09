@@ -81,16 +81,16 @@ The ten guardrails from the [backlog index](../README.md#guardrails-apply-to-eve
 
 ## Acceptance criteria
 
-- [ ] **US-8.1** I can export everything the app holds about me as JSON.
-- [ ] **US-8.2** I can export my entries as CSV for a spreadsheet.
-- [ ] **US-8.3** I can delete my account.
-- [ ] **US-8.4** Other people's data survives my deletion.
-- [ ] **US-8.5** I can remove a dependent profile I manage.
-- [ ] **US-8.6** I am told, before confirming, exactly what deletion does and does not remove.
-- [ ] **US-8.7** The guardrail audit is complete, with each guardrail verified and recorded.
-- [ ] **US-8.8** The app passes the accessibility pass on every screen.
-- [ ] The privacy policy and terms describe the real behaviour of the app.
-- [ ] The product states plainly that it is not a medical device.
+- [x] **US-8.1** I can export everything the app holds about me as JSON.
+- [x] **US-8.2** I can export my entries as CSV for a spreadsheet.
+- [x] **US-8.3** I can delete my account.
+- [x] **US-8.4** Other people's data survives my deletion.
+- [x] **US-8.5** I can remove a dependent profile I manage.
+- [x] **US-8.6** I am told, before confirming, exactly what deletion does and does not remove.
+- [x] **US-8.7** The guardrail audit is complete, with each guardrail verified and recorded.
+- [x] **US-8.8** The app passes the accessibility pass on every screen.
+- [x] The privacy policy and terms describe the real behaviour of the app.
+- [x] The product states plainly that it is not a medical device.
 
 ## Dependencies
 

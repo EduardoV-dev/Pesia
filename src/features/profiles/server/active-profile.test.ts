@@ -11,6 +11,7 @@ function buildProfile(overrides: Partial<Profile>): Profile {
     unit: "kg",
     avatarEmoji: null,
     isDependent: false,
+    removedAt: null,
     heightCm: null,
     bmiEnabled: false,
     createdAt: new Date(),

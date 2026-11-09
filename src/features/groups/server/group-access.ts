@@ -121,7 +121,7 @@ export async function listGroupMembers(groupId: string): Promise<GroupMember[]> 
     .select({ membership: groupMemberships, profile: profiles })
     .from(groupMemberships)
     .innerJoin(profiles, eq(groupMemberships.profileId, profiles.id))
-    .where(and(eq(groupMemberships.groupId, groupId), isNull(groupMemberships.leftAt)))
+    .where(and(eq(groupMemberships.groupId, groupId), isNull(groupMemberships.leftAt), isNull(profiles.removedAt)))
     .orderBy(asc(groupMemberships.joinedAt))
 
   return rows.map((row) => ({ membership: row.membership, profile: row.profile }))

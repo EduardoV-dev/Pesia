@@ -9,10 +9,12 @@
   --surface-muted: #fbf8f5;
   --surface-sunken: #f4f1ee;
   --ink: #1b1614;
-  --ink-muted: #8c817a;
+  /* WCAG AA on surface/muted/sunken at normal-text size. */
+  --ink-muted: #6e645c;
   --line: #f0e9e3;
-  --accent: #f97316;
-  --accent-strong: #ea580c;
+  /* The saturated orange, deep enough for white button labels (AA 4.5+). */
+  --accent: #c2410c;
+  --accent-strong: #9a3412;
   --accent-soft: #fff0e3;
   --accent-ink: #ffffff;
 
@@ -55,6 +57,8 @@
   --accent-strong: #f97316;
   --accent-soft: #3a2a1e;
   --accent-ink: #1c1613;
+  --destructive: #ffb4a9;
+  --destructive-foreground: #1c1613;
 }
 
 @theme inline {

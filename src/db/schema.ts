@@ -93,6 +93,10 @@ export const profiles = pgTable(
     unit: text("unit").$type<WeightUnit>().default("kg").notNull(),
     avatarEmoji: text("avatar_emoji"),
     isDependent: boolean("is_dependent").default(false).notNull(),
+    // Soft removal for a managed profile (Epic 8): stops future recording without
+    // rewriting a history other people already saw. A hard delete would cascade
+    // its entries away.
+    removedAt: timestamp("removed_at", { withTimezone: true }),
     // Optional private BMI reference: off by default, height only when opted in (G4).
     heightCm: integer("height_cm"),
     bmiEnabled: boolean("bmi_enabled").default(false).notNull(),

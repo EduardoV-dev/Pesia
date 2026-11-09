@@ -7,6 +7,7 @@ import { GoalForm } from "@/features/goals/components/goal-form"
 import { GoalSummary } from "@/features/goals/components/goal-summary"
 import { getActiveGoal } from "@/features/goals/server/get-active-goal"
 import { ProfileEditorForm } from "@/features/profiles/components/profile-editor-form"
+import { RemoveProfileSection } from "@/features/profiles/components/remove-profile-section"
 import { getProfileForManager } from "@/features/profiles/server/profile-access"
 import { getGroupsForProfile } from "@/features/groups/server/group-access"
 import { TrendSection } from "@/features/stats/components/trend-section"
@@ -133,6 +134,10 @@ export default async function ProfilePage({
 
         <ProfileEditorForm profile={profile} />
       </div>
+
+      {profile.isDependent ? (
+        <RemoveProfileSection profileId={profile.id} displayName={profile.displayName} />
+      ) : null}
     </main>
   )
 }

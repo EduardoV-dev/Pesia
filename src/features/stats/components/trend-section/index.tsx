@@ -133,6 +133,7 @@ function progressShareWords(trend: TrendView, isMaintain: boolean): string | nul
 /** The two inline stat cards: goal progress against the band, and the pct change. */
 function pairCards(trend: TrendView, goal: GoalProgressInput, unit: WeightUnit): ReactNode[] {
   const share = trend.progress?.percentage ?? 0
+  const directionWords = trend.direction === "insufficient" ? null : DIRECTION_TEXT[trend.direction]
 
   if (goal.direction === "maintain") {
     const band = goal.bandKg ?? 0
@@ -162,7 +163,15 @@ function pairCards(trend: TrendView, goal: GoalProgressInput, unit: WeightUnit):
     <div key="progress" className="rounded-control bg-surface-muted px-4 py-3">
       <p className="text-xs font-semibold text-ink-muted">Avance del objetivo</p>
       <p className="font-display mt-1 text-2xl font-extrabold tracking-tight">{share}%</p>
-      <div className="mt-2 h-1.5 rounded-full bg-line">
+      <div
+        className="mt-2 h-1.5 rounded-full bg-line"
+        role="progressbar"
+        aria-label="Avance del objetivo"
+        aria-valuemin={0}
+        aria-valuemax={100}
+        aria-valuenow={share}
+        aria-valuetext={`${share}% — ${directionWords ?? "sin dirección todavía"}`}
+      >
         <div className="h-1.5 rounded-full bg-accent" style={{ width: `${share}%` }} />
       </div>
       <p className="mt-2 text-xs text-ink-muted">
