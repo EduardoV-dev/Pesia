@@ -88,5 +88,5 @@ recorded copy review.
 - [x] 8.1 `pnpm run lint` and `pnpm run typecheck` clean; full suite green.
 - [x] 8.2 Tick the epic's acceptance criteria in
       `docs/backlog/epics/epic-08-export-deletion-and-polish/epic.md`.
-- [ ] 8.3 Validate and archive the change; `openspec/specs/` gains `data-export`,
+- [x] 8.3 Validate and archive the change; `openspec/specs/` gains `data-export`,
       `account-lifecycle`, `guardrail-audit`; commit on `development`.
