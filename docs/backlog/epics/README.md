@@ -52,19 +52,20 @@ Every epic is done only when its stories satisfy these. Where an epic touches on
 | 6 | [Group board & awards](epic-06-group-board-and-awards/epic.md) | The group sees consistency and each person's own progress, filtered by consent | 5 | 11 | 2 d |
 | 7 | [PWA & reminders](epic-07-pwa-and-reminders/epic.md) | Installable app that nudges the recorder about whose turn it is | 4 | 10 | 2 d |
 | 8 | [Export, deletion & guardrail audit](epic-08-export-deletion-and-polish/epic.md) | Users can take their data and leave; the whole app passes the guardrail audit | 6, 7 | 8 | 1.5 d |
+| 9 | [Deployment & go live](epic-09-deployment-and-go-live/epic.md) | The app runs in production at a real domain and the real family weighs in | 8 | 7 | 2 d |
 
-**Total: 84 stories, 179 story points, 15.5 working days** for one developer — about 3 weeks with buffer.
+**Total: 91 stories, 193 story points, 17.5 working days** for one developer — about 4 weeks with buffer.
 
 ---
 
 ## Execution order
 
 ```
-Epic 1 ──▶ Epic 2 ──▶ Epic 3 ──▶ Epic 4 ──▶ Epic 5 ──▶ Epic 6 ──▶ Epic 8
+Epic 1 ──▶ Epic 2 ──▶ Epic 3 ──▶ Epic 4 ──▶ Epic 5 ──▶ Epic 6 ──▶ Epic 8 ──▶ Epic 9
                                   └──────────────────────▶ Epic 7 ────────┘
 ```
 
-Epic 4 is the convergence point: Epic 5 (stats) and Epic 7 (reminders) both depend on it and can run in parallel afterwards.
+Epic 4 is the convergence point: Epic 5 (stats) and Epic 7 (reminders) both depend on it and can run in parallel afterwards. Epic 9 runs last: nothing deploys before the guardrail audit of Epic 8 has passed.
 
 ---
 
@@ -90,8 +91,10 @@ Body fat and body composition · calories or nutrition tracking · photos · pub
 
 ## Open items blocking M1
 
-1. **Domain + hosting sign-up.** Google OAuth needs a public HTTPS callback (`https://<domain>/api/auth/callback/google`). The deployed domain is required before auth can be tested end to end.
-2. **A real family group for testing.** 4–6 profiles with real goal directions — at least one "maintain" and one "gain" — so the mixed-goal case that motivated the design is actually exercised. Synthetic data hides exactly the bugs that matter here.
+Both open items are scoped as [Epic 9 — Deployment & go live](epic-09-deployment-and-go-live/epic.md):
+
+1. Domain + hosting sign-up → US-9.1 to US-9.3.
+2. A real family group for testing → US-9.7.
 
 ---
 

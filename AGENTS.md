@@ -11,7 +11,7 @@ An invite-only PWA where one recorder logs everyone's weight on a shared screen,
 member sees their own goal-relative trend, and the group sees **consistency — never body
 size**. Mobile-first, closed by default, built so comparison can never become shame.
 
-The full product definition lives in `docs/backlog/epics/` — 8 epics, 84 user stories.
+The full product definition lives in `docs/backlog/epics/` — 9 epics, 91 user stories.
 Read `docs/backlog/epics/README.md` first; it contains the guardrail table that governs
 every epic.
 
@@ -93,6 +93,7 @@ openspec new change "<name>"     # proposal -> specs -> design -> tasks
 | 6   | `epic-06-group-board-and-awards`     | `group-board`, `awards`                               |
 | 7   | `epic-07-pwa-and-reminders`          | `pwa`, `reminders`                                    |
 | 8   | `epic-08-export-deletion-and-polish` | `data-export`, `account-lifecycle`, `guardrail-audit` |
+| 9   | `epic-09-deployment-and-go-live`     | infra only — no capability deltas (proposal, design, tasks) |
 
 Do not implement an epic without its change. Do not skip the archive step — the
 accumulated `openspec/specs/` is the real system spec.
