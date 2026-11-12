@@ -33,7 +33,7 @@ serwist/
 **/.impeccable/config.local.json
 **/.impeccable/hook.cache.json
 **/.impeccable/hook.pending.json
-**/.impeccable/*.png
+**/.impeccable/**/*.png
 **/.impeccable/review/
 **/.impeccable/questions/
 **/.impeccable/build/*
