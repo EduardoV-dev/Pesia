@@ -1,0 +1,60 @@
+{
+  "title": "Weight Tracker — ¿cómo queda la pantalla de acceso?",
+  "question": "El acceso entra solo con Google (así está construido). Elegí una dirección, el canon, o pedí otra mano.",
+  "options": [
+    {
+      "id": "naranja",
+      "kind": "grounded",
+      "label": "La bienvenida naranja",
+      "kicker": "IMPECCABLE'S PICK",
+      "lineage": "Tu referencia 1-signup-1: bienvenida cálida e ilustrada",
+      "thesis": "La portada se siente como una cocina en domingo: ilustración de familia y una sola tarjeta blanca con la acción.",
+      "palette": ["#FDE8D4", "#F8C79C", "#FFFFFF", "#1B1614", "#F97316"],
+      "materials": [
+        "ilustración doméstica cálida",
+        "tarjeta blanca 24px",
+        "un solo acento naranja"
+      ],
+      "viewport": "390x844: ilustración en la mitad superior, tarjeta inferior con titular, Continuar con Google y la línea de términos.",
+      "risk": "Si la ilustración se pone tierna de más se lee como juego, no como ritual familiar.",
+      "case": "La calidez vende confianza en un producto que documenta cuerpos; el acento naranja queda como única señal, sin veredictos.",
+      "comp": ".impeccable/mocks/signup/naranja.png",
+      "hero": ".impeccable/design-inspirations/1-signup-1.png",
+      "htmlFrame": "390x844"
+    },
+    {
+      "id": "visita",
+      "kind": "grounded",
+      "label": "La visita guiada",
+      "kicker": "ALTERNATIVE",
+      "lineage": "Tu referencia 1-signup-2: previsualización de producto en tarjetas apiladas",
+      "thesis": "La portada muestra el producto de verdad: tarjetas blancas que anticipan el pesaje antes de pedir entrada.",
+      "palette": ["#FDE8D4", "#FAD1AE", "#FFFFFF", "#1B1614", "#F97316"],
+      "materials": [
+        "tarjetas apiladas blancas",
+        "sparkline naranja con dots huecos",
+        "píldora de dirección por palabras"
+      ],
+      "viewport": "390x844: mini ficha de pesada (72,4 kg + píldora de dirección), mini sparkline, fila del día, y tarjeta final Continuar con Google.",
+      "risk": "Tres tarjetas de datos pueden pesar más que la bienvenida; la jerarquía tiene que leerse derecho.",
+      "case": "Sin ilustración externa: el argumento es el producto mismo, con datos de muestra que ya pasan todas las vallas.",
+      "comp": ".impeccable/mocks/signup/visita.png",
+      "hero": ".impeccable/design-inspirations/1-signup-2.png",
+      "htmlFrame": "390x844"
+    }
+  ],
+  "reroll": { "registers": ["safer", "bolder"] },
+  "buildPath": { "value": "comp", "toggle": true },
+  "canon": true,
+  "canonCard": {
+    "kind": "canon",
+    "label": "The category standard",
+    "thesis": "La tarjeta de acceso centrada que todo el mundo reconoce, ejecutada impecable.",
+    "palette": ["#FDE8D4", "#FFFFFF", "#1B1614", "#F97316"],
+    "materials": ["tarjeta blanca única", "rejilla simple", "un CTA"],
+    "viewport": "390x844: tarjeta centrada con wordmark, titular, Continuar con Google y línea legal.",
+    "risk": "Segura pero indistinguible de cualquier app.",
+    "comp": ".impeccable/mocks/signup/canon.png"
+  },
+  "steer": true
+}

@@ -1,0 +1,319 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=390, initial-scale=1">
+<title>Weight Tracker — Pantalla de tendencia (peach)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&family=Manrope:wght@500;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --peach-a:#FDE8D4; --peach-b:#FAD1AE; --peach-c:#F8C79C;
+    --card:#FFFFFF; --ink:#1B1614; --muted:#8C817A; --line:#F0E9E3;
+    --orange:#F97316; --orange-deep:#EA580C; --orange-tint:#FFF0E3;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:#2a2420;font-family:'Hanken Grotesk',system-ui,sans-serif;color:var(--ink);-webkit-font-smoothing:antialiased;padding:24px;display:grid;gap:28px;justify-content:center;grid-template-columns:repeat(auto-fit,390px)}
+  h2.state{color:#E8D5C4;font-family:'Manrope',sans-serif;font-size:13px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;margin-bottom:8px}
+  .label{color:#CBB9AA;font-size:11px;margin-bottom:14px;max-width:390px}
+  .phone{width:390px;background:linear-gradient(168deg,var(--peach-a) 0%,var(--peach-b) 52%,var(--peach-c) 100%);border-radius:32px;padding:18px 16px 22px;box-shadow:0 22px 60px rgba(0,0,0,.35);position:relative}
+  .phone::before{content:"";position:absolute;inset:0;border-radius:32px;background:radial-gradient(90% 46% at 18% 6%,rgba(255,255,255,.55),transparent 62%);pointer-events:none}
+  .sheet{position:relative;display:flex;flex-direction:column;gap:10px}
+  .card{background:var(--card);border-radius:24px;padding:14px 16px;box-shadow:0 10px 26px rgba(150,95,45,.10)}
+  .id{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+  .who{display:flex;align-items:center;gap:9px}
+  .badge{width:30px;height:30px;border-radius:10px;background:var(--orange);display:grid;place-items:center;flex:0 0 auto}
+  .badge svg{width:17px;height:17px;stroke:#fff;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+  .nm{font-size:14.5px;font-weight:600;letter-spacing:-.01em}
+  .sub{font-size:11.5px;color:var(--muted);margin-top:1px}
+  .figure{display:flex;align-items:baseline;gap:7px;margin:10px 0 2px}
+  .figure b{font-family:'Manrope',sans-serif;font-size:47px;font-weight:800;letter-spacing:-.035em;line-height:.95;font-variant-numeric:tabular-nums}
+  .figure span{font-size:16px;font-weight:600;color:var(--muted)}
+  .state{display:flex;align-items:center;gap:7px;margin-top:8px;flex-wrap:wrap}
+  .pill{display:inline-flex;align-items:center;gap:6px;font-size:11.5px;font-weight:600;padding:4px 10px;border-radius:999px;background:var(--orange-tint);color:var(--orange-deep)}
+  .pill i{width:6px;height:6px;border-radius:50%;background:var(--orange);display:block}
+  .pill.ghost{background:#F4F1EE;color:var(--muted)}
+  .charthead{display:flex;justify-content:space-between;align-items:center;margin-bottom:9px}
+  .charthead span{font-size:11.5px;color:var(--muted);font-weight:600}
+  .plot{height:112px;position:relative;background-image:radial-gradient(circle,rgba(27,22,20,.13) 1px,transparent 1px);background-size:16px 16px}
+  .plot svg{position:absolute;inset:0;width:100%;height:100%}
+  .caption{font-size:10.5px;color:var(--muted);margin-top:7px}
+  .cards-inline{display:flex;gap:10px;align-items:stretch}
+  .mini{flex:1;background:#FBF8F5;border-radius:16px;padding:10px 12px}
+  .mini .k{font-size:10.5px;color:var(--muted);font-weight:600}
+  .mini .v{font-family:'Manrope',sans-serif;font-size:22px;font-weight:800;letter-spacing:-.02em;margin-top:3px;font-variant-numeric:tabular-nums}
+  .bar{height:6px;border-radius:999px;background:#F4F1EE;margin-top:8px;overflow:hidden}
+  .bar i{display:block;height:100%;background:var(--orange);border-radius:999px}
+  .note{font-size:11px;color:var(--muted);line-height:1.45}
+  .sep{height:1px;background:var(--line);margin:10px 0}
+  .ticks{font-size:10px;color:var(--muted);display:flex;justify-content:space-between;margin-top:5px}
+  .btnrow{display:flex;gap:8px;margin-top:8px}
+  .btn{flex:1;border:0;border-radius:14px;background:var(--orange);color:#fff;font-family:'Manrope',sans-serif;font-size:12.5px;font-weight:800;padding:11px;cursor:pointer;box-shadow:0 8px 18px rgba(234,88,12,.28)}
+  .btn.ghost{background:#F4F1EE;color:var(--ink);box-shadow:none}
+  .hinput{flex:1;display:flex;align-items:center;gap:8px;background:#FBF8F5;border-radius:14px;padding:10px 12px}
+  .hinput input{flex:1;min-width:0;border:0;outline:0;background:transparent;font-family:'Manrope',sans-serif;font-size:16px;font-weight:800;color:var(--ink)}
+  .hinput span{font-size:12px;font-weight:700;color:var(--muted)}
+</style>
+</head>
+<body>
+
+<section>
+  <h2 class="state">A — con objetivo · baja hasta 65</h2>
+  <p class="label">El estado por defecto. La línea es la media de 7 días, los puntos sueltos son las pesadas reales; el hueco es la semana sin datos. La dirección sólo aparece si el movimiento pasa la zona muerta (±0,3 kg por semana).</p>
+  <div class="phone"><div class="sheet">
+    <div class="card">
+      <div class="id">
+        <div class="who">
+          <span class="badge"><svg viewBox="0 0 24 24"><path d="M4 20h16"/><path d="M8 20a4 4 0 0 1 8 0"/><path d="M12 8v4"/><path d="M7 6h10l-1 6H8L7 6Z"/></svg></span>
+          <div><div class="nm">Luis Herrera</div><div class="sub">kg · bajar hasta 65</div></div>
+        </div>
+        <div class="unit">kg</div>
+      </div>
+      <div class="figure"><b>72,4</b><span>kg</span></div>
+      <div class="state">
+        <span class="pill"><i></i>Moviendo hacia tu objetivo</span>
+        <span class="pill ghost">62% del camino</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="charthead"><span>Tu tendencia · media de 7 días</span><span>últimas 5 semanas</span></div>
+      <div class="plot">
+        <svg viewBox="0 0 320 132" preserveAspectRatio="none" role="img" aria-label="Tendencia de las últimas 5 semanas, moviéndose hacia tu objetivo">
+          <defs><linearGradient id="fa" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#F97316" stop-opacity=".24"/><stop offset="100%" stop-color="#F97316" stop-opacity="0"/>
+          </linearGradient></defs>
+          <path d="M6 104 L46 98 L86 102 L126 88 L166 80 L192 72 L226 62 L262 54 L300 44 L314 40 L314 132 L6 132 Z" fill="url(#fa)"/>
+          <path d="M6 104 L46 98 L86 102 L126 88 L166 80 L192 72" fill="none" stroke="#F97316" stroke-width="2.6" stroke-linecap="round"/>
+          <path d="M232 60 L262 54 L300 44 L314 40" fill="none" stroke="#F97316" stroke-width="2.6" stroke-linecap="round"/>
+          <circle cx="46" cy="98" r="4" fill="#fff" stroke="#F97316" stroke-width="2.4"/>
+          <circle cx="166" cy="80" r="4" fill="#fff" stroke="#F97316" stroke-width="2.4"/>
+          <circle cx="300" cy="44" r="4" fill="#fff" stroke="#F97316" stroke-width="2.4"/>
+          <circle cx="314" cy="40" r="4.5" fill="#fff" stroke="#F97316" stroke-width="2.6"/>
+        </svg>
+      </div>
+      <p class="caption">La línea es la media de 7 días; los puntos son tus pesadas. La semana del 20 no tiene datos: se ve el hueco.</p>
+      <p class="caption" style="margin-top:3px">−4,2% de tu peso desde el inicio de tu objetivo · para screen readers se resume el tramo completo en texto.</p>
+    </div>
+
+    <div class="cards-inline">
+      <div class="mini">
+        <div class="k">Avance del objetivo</div>
+        <div class="v">62%</div>
+        <div class="bar"><i style="width:62%"></i></div>
+        <p class="ticks"><span>0</span><span>de 71 a 65 kg</span><span>100</span></p>
+      </div>
+      <div class="mini">
+        <div class="k">Tu peso cambió</div>
+        <div class="v">−4,2%</div>
+        <div class="bar" style="opacity:0;pointer-events:none"></div>
+        <p class="ticks" style="margin-top:14px">desde el inicio de tu objetivo</p>
+      </div>
+    </div>
+  </div></div>
+</section>
+
+<section>
+  <h2 class="state">B — mantener · dentro y sin veredicto</h2>
+  <p class="label">El objetivo «mantener» es de primera clase. Sin color que diga bien o mal: solo la distancia a la banda.</p>
+  <div class="phone"><div class="sheet">
+    <div class="card">
+      <div class="id">
+        <div class="who">
+          <span class="badge"><svg viewBox="0 0 24 24"><path d="M4 20h16"/><path d="M8 20a4 4 0 0 1 8 0"/><path d="M12 8v4"/><path d="M7 6h10l-1 6H8L7 6Z"/></svg></span>
+          <div><div class="nm">Ana Duarte</div><div class="sub">kg · objetivo activo</div></div>
+        </div>
+        <div class="unit pill ghost">72,1 kg hoy</div>
+      </div>
+      <div class="figure"><b>72,1</b><span>kg</span></div>
+      <div class="state"><span class="pill"><i></i>Estable</span></div>
+    </div>
+
+    <div class="card">
+      <div class="charthead"><span>Tu tendencia · media de 7 días</span><span>últimas 5 semanas</span></div>
+      <div class="plot">
+        <svg viewBox="0 0 320 132" preserveAspectRatio="none" role="img" aria-label="Tendencia estable de las últimas 5 semanas">
+          <path d="M6 62 L46 60 L86 64 L126 60 L166 63 L206 61 L246 62 L286 60 L314 61" fill="none" stroke="#F97316" stroke-width="2.6" stroke-linecap="round"/>
+          <circle cx="86" cy="64" r="4" fill="#fff" stroke="#F97316" stroke-width="2.4"/>
+          <circle cx="246" cy="62" r="4" fill="#fff" stroke="#F97316" stroke-width="2.4"/>
+          <circle cx="314" cy="61" r="4.5" fill="#fff" stroke="#F97316" stroke-width="2.6"/>
+        </svg>
+      </div>
+      <p class="caption">La línea es la media de 7 días; los puntos son tus pesadas.</p>
+    </div>
+
+    <div class="cards-inline">
+      <div class="mini">
+        <div class="k">Tu banda</div>
+        <div class="v">72 ± 2 kg</div>
+      </div>
+      <div class="mini">
+        <div class="k">Distancia a la banda</div>
+        <div class="v">Estás dentro</div>
+      </div>
+    </div>
+  </div></div>
+</section>
+
+<section>
+  <h2 class="state">C — sin objetivo · primera vista válida</h2>
+  <p class="label">Sin objetivo no es un error ni una tarea incumplida: tendencia, dirección y cambio porcentual, sin barra de avance.</p>
+  <div class="phone"><div class="sheet">
+    <div class="card">
+      <div class="id">
+        <div class="who">
+          <span class="badge"><svg viewBox="0 0 24 24"><path d="M4 20h16"/><path d="M8 20a4 4 0 0 1 8 0"/><path d="M12 8v4"/><path d="M7 6h10l-1 6H8L7 6Z"/></svg></span>
+          <div><div class="nm">Nina Feld</div><div class="sub">kg · sin objetivo, medís igual</div></div>
+        </div>
+        <div class="unit">kg</div>
+      </div>
+      <div class="figure"><b>68,9</b><span>kg</span></div>
+      <div class="state"><span class="pill"><i></i>El peso va bajando</span></div>
+    </div>
+
+    <div class="card">
+      <div class="charthead"><span>Tu tendencia · media de 7 días</span><span>últimas 5 semanas</span></div>
+      <div class="plot">
+        <svg viewBox="0 0 320 132" preserveAspectRatio="none" role="img" aria-label="Tendencia de las últimas 5 semanas, el peso va bajando">
+          <defs><linearGradient id="fc" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#F97316" stop-opacity=".24"/><stop offset="100%" stop-color="#F97316" stop-opacity="0"/>
+          </linearGradient></defs>
+          <path d="M6 40 L46 46 L86 44 L126 58 L166 66 L206 74 L246 80 L286 86 L314 90 L314 132 L6 132 Z" fill="url(#fc)"/>
+          <path d="M6 40 L46 46 L86 44 L126 58 L166 66 L206 74 L246 80 L286 86 L314 90" fill="none" stroke="#F97316" stroke-width="2.6" stroke-linecap="round"/>
+          <circle cx="126" cy="58" r="4" fill="#fff" stroke="#F97316" stroke-width="2.4"/>
+          <circle cx="286" cy="86" r="4" fill="#fff" stroke="#F97316" stroke-width="2.4"/>
+          <circle cx="314" cy="90" r="4.5" fill="#fff" stroke="#F97316" stroke-width="2.6"/>
+        </svg>
+      </div>
+      <p class="caption">La línea es la media de 7 días; los puntos son tus pesadas.</p>
+    </div>
+
+    <div class="cards-inline">
+      <div class="mini">
+        <div class="k">Tu peso cambió</div>
+        <div class="v">−2,8%</div>
+        <div class="bar" style="opacity:0;pointer-events:none"></div>
+        <p class="ticks" style="margin-top:14px">desde tu primera pesada</p>
+      </div>
+    </div>
+    <p class="card note">Los objetivos son opcionales: tu tendencia funciona igual sin uno.</p>
+  </div></div>
+</section>
+
+<section>
+  <h2 class="state">D — persona a cargo · solo tendencia</h2>
+  <p class="label">Sin objetivo, sin avance, sin IMC. La dirección y la estabilidad quedan intactas, medidas contra sí misma.</p>
+  <div class="phone"><div class="sheet">
+    <div class="card">
+      <div class="id">
+        <div class="who">
+          <span class="badge"><svg viewBox="0 0 24 24"><path d="M4 20h16"/><path d="M8 20a4 4 0 0 1 8 0"/><path d="M12 8v4"/><path d="M7 6h10l-1 6H8L7 6Z"/></svg></span>
+          <div><div class="nm">Mara</div><div class="sub">kg · a cargo, medís igual</div></div>
+        </div>
+        <div class="unit">kg</div>
+      </div>
+      <div class="figure"><b>24,6</b><span>kg</span></div>
+      <div class="state"><span class="pill"><i></i>El peso va subiendo</span></div>
+    </div>
+
+    <div class="card">
+      <div class="charthead"><span>Tu tendencia · media de 7 días</span><span>últimas 8 semanas</span></div>
+      <div class="plot">
+        <svg viewBox="0 0 320 132" preserveAspectRatio="none" role="img" aria-label="Tendencia de las últimas 8 semanas">
+          <path d="M6 96 L46 92 L86 90 L126 84 L166 80 L206 72 L246 68 L286 64 L314 60" fill="none" stroke="#F97316" stroke-width="2.6" stroke-linecap="round"/>
+          <circle cx="126" cy="84" r="4" fill="#fff" stroke="#F97316" stroke-width="2.4"/>
+          <circle cx="286" cy="64" r="4" fill="#fff" stroke="#F97316" stroke-width="2.4"/>
+          <circle cx="314" cy="60" r="4.5" fill="#fff" stroke="#F97316" stroke-width="2.6"/>
+        </svg>
+      </div>
+      <p class="caption">La línea es la media de 7 días; los puntos son tus pesadas.</p>
+    </div>
+  </div></div>
+</section>
+
+<section>
+  <h2 class="state">E — sin datos suficientes · honesto</h2>
+  <p class="label">Menos de 4 semanas de pesada no fabrica dirección: se dice, y se muestra lo que existe. Lo mismo vale para un período sin pesadas: hueco, no línea.</p>
+  <div class="phone"><div class="sheet">
+    <div class="card">
+      <div class="id">
+        <div class="who">
+          <span class="badge"><svg viewBox="0 0 24 24"><path d="M4 20h16"/><path d="M8 20a4 4 0 0 1 8 0"/><path d="M12 8v4"/><path d="M7 6h10l-1 6H8L7 6Z"/></svg></span>
+          <div><div class="nm">Luis Herrera</div><div class="sub">kg · objetivo activo</div></div>
+        </div>
+        <div class="unit pill ghost">2 pesadas</div>
+      </div>
+      <div class="figure"><b>71,8</b><span>kg</span></div>
+    </div>
+
+    <div class="card">
+      <div class="charthead"><span>Tu tendencia · media de 7 días</span><span>2 pesadas</span></div>
+      <div class="plot">
+        <svg viewBox="0 0 320 132" preserveAspectRatio="none" role="img" aria-label="Pesadas disponibles de las últimas 2 semanas, sin dirección todavía">
+          <circle cx="86" cy="58" r="4.5" fill="#fff" stroke="#F97316" stroke-width="2.6"/>
+          <circle cx="238" cy="66" r="4.5" fill="#fff" stroke="#F97316" stroke-width="2.6"/>
+        </svg>
+      </div>
+      <p class="note">Todavía no hay suficiente pesada con la que medir una dirección. Cuando haya cerca de un mes, la tendencia aparece. Acá están tus pesadas.</p>
+    </div>
+
+    <div class="card">
+      <p class="note"><b>Hueco del 10 al 18 mar</b> — las semanas sin pesada se ven como hueco, sin inventar nada.</p>
+    </div>
+  </div></div>
+</section>
+
+<section>
+  <h2 class="state">F — IMC privado · optado y activo</h2>
+  <p class="label">Solo la propia pantalla del miembro. Encendido: pide altura la primera vez. Sin etiquetas, sin colores, sin evaluar nada: es una referencia de cribado, con el dedo hacia tu médico.</p>
+  <div class="phone"><div class="sheet">
+    <div class="card">
+      <div class="id">
+        <div class="who">
+          <span class="badge"><svg viewBox="0 0 24 24"><path d="M4 20h16"/><path d="M8 20a4 4 0 0 1 8 0"/><path d="M12 8v4"/><path d="M7 6h10l-1 6H8L7 6Z"/></svg></span>
+          <div><div class="nm">Luis Herrera</div><div class="sub">1,70 m · referencia activa</div></div>
+        </div>
+        <div class="unit">kg</div>
+      </div>
+      <div class="figure"><b>24,2</b><span>IMC</span></div>
+      <p class="note" style="margin-top:6px">Es un número para tener a mano: el IMC no separa músculo de grasa y el riesgo no pesa igual en todas las edades ni en todos los cuerpos. No caracteriza lo que pasa por dentro.</p>
+      <div class="state"><span class="pill ghost">Referencia de cribado</span><span class="pill ghost">No juzga cuerpos</span></div>
+      <p class="note" style="margin-top:8px">¿Algo te da vueltas? La mejor lectura la da tu médica o tu médico.</p>
+      <div class="sep"></div>
+      <div class="btnrow">
+        <button class="btn ghost">Apagar la referencia</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="state" style="margin-top:0">
+        <span class="pill"><i></i>Moviendo hacia tu objetivo</span>
+      </div>
+    </div>
+  </div></div>
+</section>
+
+<section>
+  <h2 class="state">G — IMC apagado · opt-in limpio</h2>
+  <p class="label">Antes de optar: no existe ningún número ni ninguna promesa. Solo una referencia concreta.</p>
+  <div class="phone"><div class="sheet">
+    <div class="card">
+      <div class="state" style="margin-top:0">
+        <span class="pill ghost">Referencia de IMC</span>
+      </div>
+      <p class="note" style="margin:8px 0">Un número de cribado privado, sólo para tu pantalla. Activo: pide tu altura y se muestra. Apagado: deja de verse.</p>
+      <div class="btnrow">
+        <div class="hinput">
+          <input aria-label="Altura en centímetros" placeholder="170">
+          <span>cm</span>
+        </div>
+        <button class="btn" style="flex:0 0 40%">Activar</button>
+      </div>
+    </div>
+  </div></div>
+</section>
+
+<!-- Accepted by the user on 2026-11-07: this layout is the pinned trend-screen direction. -->
+</body>
+</html>

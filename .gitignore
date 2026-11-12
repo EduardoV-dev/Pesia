@@ -7,6 +7,8 @@ node_modules/
 .next/
 out/
 build/
+!.impeccable/build/
+!.impeccable/build/state.json
 dist/
 *.tsbuildinfo
 next-env.d.ts
@@ -26,9 +28,31 @@ public/workbox-*.js
 serwist/
 
 # impeccable
-.impeccable/config.local.json
-.impeccable/review/
-.impeccable/build/
+# Ephemeral output, runtime state, and per-developer overrides.
+# Shared artifacts such as config.json, design.json, and surface briefs stay tracked.
+**/.impeccable/config.local.json
+**/.impeccable/hook.cache.json
+**/.impeccable/hook.pending.json
+**/.impeccable/*.png
+**/.impeccable/review/
+**/.impeccable/questions/
+**/.impeccable/build/*
+**/.impeccable/build/*
+!**/.impeccable/build/state.json
+**/.impeccable/live/server.json
+**/.impeccable/live/sessions/
+**/.impeccable/live/previews/
+**/.impeccable/live/annotations/
+**/.impeccable/live/cache/
+**/.impeccable/live/manual-edit-apply-transaction.json
+**/.impeccable/live/manual-edit-events.jsonl
+**/.impeccable/live/manual-edit-evidence/
+**/.impeccable/live/pending-manual-edits.json
+**/.impeccable/live/deferred-svelte-component-accepts.json
+**/.impeccable/live/*.png
+**/.impeccable/design-inspirations/
+# Keep Impeccable build evidence that its finish reviewer requires.
+!**/.impeccable/build/state.json
 
 # downloaded platform artifacts (the launcher re-fetches and verifies them)
 .agents/skills/impeccable/scripts/bin/
@@ -50,5 +74,4 @@ pnpm-debug.log*
 # agent tooling
 .atl/
 .serena/
-
-.impeccable/
+.claude/
